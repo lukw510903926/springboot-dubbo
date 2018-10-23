@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+	<!-- ID 标识，命名随意 -->
+	<id>${project.version}</id>
+	<!-- 设置为 tar.gz 包格式 -->
+	<formats>
+		<!-- <format>zip</format> -->
+		<format>tar.gz</format>
+	</formats>
+	<!-- 默认为 TRUE, 设为 FALSE, 防止将 ${project.finalName} 作为根目录打进 WAR 包 -->
+	<!-- TRUE 结构: ${project.finalName}.war/${project.finalName}/WEB-INF -->
+	<!-- FALSE 结构: ${project.finalName}.war/WEB-INF -->
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}/build/${profiles.active}</directory>
+			<useDefaultExcludes>true</useDefaultExcludes>
+			<outputDirectory>conf</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/build/bin</directory>
+			<outputDirectory>bin</outputDirectory>
+			<fileMode>0755</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<useDefaultExcludes>true</useDefaultExcludes>
+			<outputDirectory>conf</outputDirectory>
+			<fileMode>0644</fileMode>
+		</fileSet>
+		<fileSet>
+			<outputDirectory>logs</outputDirectory>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+			<fileMode>0644</fileMode>
+		</fileSet>
+	</fileSets>
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>lib</outputDirectory><!-- 将scope为runtime的依赖包打包到lib目录下。 -->
+			<scope>runtime</scope>
+		</dependencySet>
+	</dependencySets>
+</assembly>

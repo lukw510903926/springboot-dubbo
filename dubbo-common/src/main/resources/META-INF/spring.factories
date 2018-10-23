@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.dubbo.common.autoconfigure.sso.SsoAutoConfiguration,\
+com.dubbo.common.autoconfigure.oss.OssAutoConfiguration

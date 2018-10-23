@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>thymeleaf 模版</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <script th:src="@{/js/jquery-3.3.1.js}"></script>
+    <script th:src="@{/js/jquery-util.js}"></script>
+    <script th:src="@{/js/jquery-namespace.js}"></script>
+</head>
+<body>
+<div class="container">
+    <div style="padding: 10px">
+        <form id="template">
+            <div class="row">
+                <div class="col-auto col-md-5">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">姓名:</div>
+                        </div>
+                        <input type="text" name="name" class="form-control" placeholder="姓名"/>
+                    </div>
+                </div>
+                <div class="col-auto col-md-5">
+                    <div class="input-group mb-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">账号:</div>
+                        </div>
+                        <input type="text" name="username" class="form-control" placeholder="账号"/>
+                    </div>
+                </div>
+                <div class="col-auto col-md-2">
+                    <button type="button" class="btn btn-primary mb-2" id="addBtn">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <textarea class="form-control" rows="3" id="textarea"></textarea>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/modules/template.js}"></script>
+</body>
+</html>
