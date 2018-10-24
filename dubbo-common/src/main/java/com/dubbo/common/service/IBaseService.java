@@ -5,10 +5,15 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dubbo.common.util.ReflectionUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * @version V1.0
@@ -37,7 +42,14 @@ public interface IBaseService<T> extends IService<T> {
         return list(new QueryWrapper<>(t));
     }
 
-    default IPage page(IPage<T> page, T t) {
+    default IPage<T> page(Page<T> page, T t) {
+
+        if (ArrayUtils.isEmpty(page.descs()) && ArrayUtils.isEmpty(page.ascs())) {
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
+            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyColumn())) {
+                page.setDesc(tableInfo.getKeyColumn());
+            }
+        }
         return page(page, new QueryWrapper<>(t));
     }
 }
