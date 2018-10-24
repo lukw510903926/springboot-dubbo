@@ -52,7 +52,7 @@ public class UserController {
     public RestResult<IPage<User>> query(@RequestBody User user){
         logger.info("user: {}",user);
         Page<User> page = new Page<>(1,10);
-        IPage<User> result = this.userService.page(page, new QueryWrapper<>(user));
-        return  RestResult.success(result);
+        page.setDesc("test_id");
+        return  RestResult.success(this.userService.page(page, new QueryWrapper<>(user)));
     }
 }
