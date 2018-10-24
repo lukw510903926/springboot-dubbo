@@ -53,6 +53,6 @@ public class UserController {
         logger.info("user: {}",user);
         Page<User> page = new Page<>(1,10);
         page.setDesc("test_id");
-        return  RestResult.success(this.userService.page(page, new QueryWrapper<>(user)));
+        return  RestResult.success(this.userService.page(page, user));
     }
 }
