@@ -1,9 +1,9 @@
 package com.dubbo.common.util;
 
+import com.dubbo.common.util.annotation.NotNull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -25,7 +25,6 @@ public class RequiredParameterValidator {
      */
     public static boolean validate(Object object) {
 
-        StringBuffer stringBuffer = new StringBuffer();
         List<Field> fields = ReflectionUtils.getFields(object);
         List<String> list = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(fields)) {
@@ -35,10 +34,7 @@ public class RequiredParameterValidator {
                 }
             });
         }
-        if (CollectionUtils.isEmpty(list)) {
-            return true;
-        }
-        return StringUtils.isEmpty(stringBuffer.toString());
+        return validator(object, list);
     }
 
     /**
@@ -50,20 +46,30 @@ public class RequiredParameterValidator {
      */
     public static boolean validate(Object object, String... list) {
 
+        return validator(object, Arrays.asList(list));
+    }
+
+    public static boolean validator(Object object, List<String> list) {
+
+        if (CollectionUtils.isEmpty(list)) {
+            return true;
+        }
         StringBuffer stringBuffer = new StringBuffer();
         List<Field> fields = ReflectionUtils.getFields(object);
         Map<String, Field> fieldMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(fields)) {
             fields.forEach(field -> fieldMap.put(field.getName(), field));
-            Arrays.stream(list).forEach(key -> {
+            list.forEach(key -> {
                 if (fieldMap.containsKey(key)) {
                     Object value = ReflectionUtils.getFieldValue(object, key);
-                    if (value == null) {
-                        stringBuffer.append(key).append(" 不可为空 ! ");
+                    if (value == null || StringUtils.isEmpty(value.toString())) {
+                        NotNull notNull = fieldMap.get(key).getAnnotation(NotNull.class);
+                        String property = StringUtils.isBlank(notNull.value()) ? key : notNull.value();
+                        stringBuffer.append(property).append(" 不可为空 ! ");
                     }
                 }
             });
         }
-        return StringUtils.isEmpty(stringBuffer.toString());
+        return StringUtils.isEmpty(stringBuffer);
     }
 }
