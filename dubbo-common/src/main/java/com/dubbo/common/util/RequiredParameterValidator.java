@@ -3,11 +3,9 @@ package com.dubbo.common.util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 必填参数校验
@@ -21,11 +19,36 @@ public class RequiredParameterValidator {
 
     /**
      * 指定属性校验必填
+     *
+     * @param object
+     * @return
+     */
+    public static boolean validate(Object object) {
+
+        StringBuffer stringBuffer = new StringBuffer();
+        List<Field> fields = ReflectionUtils.getFields(object);
+        List<String> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(fields)) {
+            fields.forEach(field -> {
+                if (field.isAnnotationPresent(NotNull.class)) {
+                    list.add(field.getName());
+                }
+            });
+        }
+        if (CollectionUtils.isEmpty(list)) {
+            return true;
+        }
+        return StringUtils.isEmpty(stringBuffer.toString());
+    }
+
+    /**
+     * 指定属性校验必填
+     *
      * @param object
      * @param list
      * @return
      */
-    public static boolean validate(Object object,String ...list) {
+    public static boolean validate(Object object, String... list) {
 
         StringBuffer stringBuffer = new StringBuffer();
         List<Field> fields = ReflectionUtils.getFields(object);
