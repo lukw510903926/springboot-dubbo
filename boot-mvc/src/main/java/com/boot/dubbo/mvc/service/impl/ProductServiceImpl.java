@@ -6,6 +6,7 @@ import com.boot.dubbo.api.mapper.IProductMapper;
 import com.boot.dubbo.mvc.service.IProductService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class ProductServiceImpl extends ServiceImpl<IProductMapper, Product> implements IProductService {
 
     @Override
+    @Transactional
     public boolean saveProduct(Product product) {
 
         if (StringUtils.isBlank(product.getDescription())) {
@@ -28,6 +30,7 @@ public class ProductServiceImpl extends ServiceImpl<IProductMapper, Product> imp
     }
 
     @Override
+    @Transactional
     public boolean saveOrUpdate(Product product) {
 
         if (StringUtils.isBlank(product.getDescription())) {
