@@ -27,6 +27,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private IProductService productService;
 
+    /**
+     * 需求: 同时保存user product
+     * <p>
+     * 错误的例子
+     * 如果product保存失败  虽然返回出去的信息是保存失败 但是这时的user信息是保存成功的
+     * 事物的回滚是捕捉的到exception,但是产品的保存没有异常抛出 也就不会有回滚事物发生
+     *
+     * @param entity
+     * @return
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RestResult<User> saveUser(User entity) {

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dubbo.api.entity.Product;
 import com.boot.dubbo.api.mapper.IProductMapper;
 import com.boot.dubbo.mvc.service.IProductService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,6 +20,10 @@ public class ProductServiceImpl extends ServiceImpl<IProductMapper, Product> imp
 
     @Override
     public boolean saveProduct(Product product) {
-        return false;
+
+        if (StringUtils.isBlank(product.getDescription())) {
+            return false;
+        }
+        return true;
     }
 }
