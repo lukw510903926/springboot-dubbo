@@ -1,0 +1,60 @@
+<configuration scan="true" scanPeriod="60" debug="false">
+
+	<!-- 日志输出格式 -->
+	<property name="pattern" value="[%date{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level]%logger{96}[%line]-%msg%n" />   
+	<!-- 日志保存的最大时间 -->
+	<property name="maxHistory" value="30" /> 
+	<!-- 日志文件路径 -->  
+	<property name="logPath" value="./logs" /> 
+	<!-- <property name="logPath" value="./logs" />  -->
+	<!-- 日志文件名称 -->
+	<property name="appName" value="boot-mvc"></property>
+	<!-- 控制台 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoder 默认配置为PatternLayoutEncoder -->
+		<encoder>
+			<pattern>${pattern}</pattern>
+		</encoder>
+	</appender>
+	<!-- 输出日志到文件 -->
+	<appender name="rollingAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logPath}/${appName}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${appName}-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder><!-- 必须指定，否则不会往文件输出内容 -->
+			<pattern>${pattern}</pattern>
+		</encoder>
+		<append>false</append>
+		<prudent>false</prudent>
+		<!-- <filter class="ch.qos.logback.classic.filter.LevelFilter">INFO级别的日志
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter> -->
+	</appender>
+	<!-- 错误日志 -->
+	<appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logPath}/${appName}_error.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logPath}/${appName}_error-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${pattern}</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<!-- root的默认level是DEBUG -->
+	<root level="INFO">
+		<!-- 与上面定义的appender 的name对应 -->
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="rollingAppender" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>
