@@ -29,13 +29,20 @@ public class UserController {
         return RestResult.success(this.userService.list(new QueryWrapper<>()));
     }
 
-    @GetMapping("/add")
-    public RestResult<String> add(){
+    @RequestMapping("/saveUser")
+    public RestResult<User> saveUser() {
 
-        for (int i = 0; i <20 ;i++){
+        return this.userService.saveUser(new User());
+    }
+
+
+    @GetMapping("/add")
+    public RestResult<String> add() {
+
+        for (int i = 0; i < 20; i++) {
             User user = new User();
             user.setTestDate(new Date());
-            user.setName("name : "+i);
+            user.setName("name : " + i);
             user.setTestType(i);
             this.userService.saveOrUpdate(user);
         }
@@ -43,16 +50,16 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}")
-    public RestResult<User> info(@PathVariable("userId")String userId){
+    public RestResult<User> info(@PathVariable("userId") String userId) {
 
         return RestResult.success(this.userService.getById(userId));
     }
 
     @PostMapping("/page/list")
-    public RestResult<IPage<User>> query(@RequestBody User user){
-        logger.info("user: {}",user);
-        Page<User> page = new Page<>(1,10);
+    public RestResult<IPage<User>> query(@RequestBody User user) {
+        logger.info("user: {}", user);
+        Page<User> page = new Page<>(1, 10);
         page.setDesc("test_id");
-        return  RestResult.success(this.userService.page(page, user));
+        return RestResult.success(this.userService.page(page, user));
     }
 }
