@@ -51,4 +51,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return RestResult.fail(user, "保存失败");
         }
     }
+
+    @Override
+    public boolean saveOrUpdate(User entity){
+
+        super.save(entity);
+        this.productService.saveOrUpdate(new Product());
+        return true;
+    }
 }

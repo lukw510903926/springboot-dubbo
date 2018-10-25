@@ -26,4 +26,13 @@ public class ProductServiceImpl extends ServiceImpl<IProductMapper, Product> imp
         }
         return true;
     }
+
+    @Override
+    public boolean saveOrUpdate(Product product) {
+
+        if (StringUtils.isBlank(product.getDescription())) {
+            throw  new RuntimeException("产品描述不可为空");
+        }
+        return true;
+    }
 }

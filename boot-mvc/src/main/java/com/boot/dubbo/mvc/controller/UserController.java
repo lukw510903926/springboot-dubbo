@@ -29,10 +29,34 @@ public class UserController {
         return RestResult.success(this.userService.list(new QueryWrapper<>()));
     }
 
+    /**
+     * 错误 demo
+     *
+     * @return
+     */
     @RequestMapping("/saveUser")
     public RestResult<User> saveUser() {
 
         return this.userService.saveUser(new User());
+    }
+
+    /**
+     * 正确demo
+     *
+     * @return
+     */
+    @RequestMapping("/saveOrUpdate")
+    public RestResult<User> saveOrUpdate() {
+
+        try {
+            User user = new User();
+            user.setName("user_product_name");
+            user.setTestDate(new Date());
+            this.userService.saveOrUpdate(user);
+            return RestResult.success(user);
+        } catch (Exception e) {
+            return RestResult.fail(null, e.getLocalizedMessage());
+        }
     }
 
 
