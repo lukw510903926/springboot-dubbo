@@ -18,7 +18,7 @@ import java.util.*;
 public class RequiredParameterValidator {
 
     /**
-     * 指定属性校验必填
+     * 获取object对象属性中注解NotNull.class的并校验必填
      *
      * @param object
      * @return
