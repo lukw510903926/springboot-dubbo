@@ -65,12 +65,16 @@ public class RequiredParameterValidator {
         if (CollectionUtils.isNotEmpty(fields)) {
             fields.forEach(field -> fieldMap.put(field.getName(), field));
             list.forEach(key -> {
-                if (fieldMap.containsKey(key)) {
+                Field field = fieldMap.get(key);
+                if (field != null) {
                     Object value = ReflectionUtils.getFieldValue(object, key);
                     if (value == null || StringUtils.isEmpty(value.toString())) {
-                        NotNull notNull = fieldMap.get(key).getAnnotation(NotNull.class);
-                        String property = StringUtils.isBlank(notNull.value()) ? key : notNull.value();
-                        stringBuffer.append(property).append(" 不可为空 ! ");
+                        NotNull notNull = field.getAnnotation(NotNull.class);
+                        String property = key;
+                        if (notNull != null) {
+                            property = StringUtils.isBlank(notNull.value()) ? key : notNull.value();
+                        }
+                        stringBuffer.append(property).append(" 必填! ");
                     }
                 }
             });
