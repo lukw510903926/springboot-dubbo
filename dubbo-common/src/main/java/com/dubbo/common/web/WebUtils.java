@@ -52,6 +52,17 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
     }
 
     /**
+     * session保存值
+     *
+     * @param sessionKey
+     * @param value
+     */
+    public static void setSessionArrtibute(String sessionKey, Object value) {
+
+        setSessionAttribute(getRequest(), sessionKey, value);
+    }
+
+    /**
      * 获取请求头
      *
      * @param headerName 请求头名称
