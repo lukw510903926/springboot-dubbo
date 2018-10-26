@@ -3,6 +3,7 @@ package com.dubbo.common.web;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -36,6 +37,11 @@ public class RestResult<T> implements Serializable {
      * 消息
      */
     private String msg;
+
+    /**
+     * 服务器当前时间
+     */
+    private Date now = new Date();
 
     /**
      * 请求成功
@@ -81,7 +87,7 @@ public class RestResult<T> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> RestResult<T> fail(T data,Integer code, String msg) {
+    public static <T> RestResult<T> fail(T data, Integer code, String msg) {
 
         RestResult<T> restResult = new RestResult<>();
         restResult.setSuccess(false);
@@ -93,7 +99,7 @@ public class RestResult<T> implements Serializable {
     }
 
     /**
-     * 请求失败
+     * 参数异常
      *
      * @param data
      * @param msg
@@ -141,5 +147,9 @@ public class RestResult<T> implements Serializable {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public Date getNow() {
+        return now;
     }
 }
