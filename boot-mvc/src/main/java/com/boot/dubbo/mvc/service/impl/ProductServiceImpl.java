@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dubbo.api.entity.Product;
 import com.boot.dubbo.api.mapper.IProductMapper;
 import com.boot.dubbo.mvc.service.IProductService;
+import com.dubbo.common.util.RequiredParameterValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,18 +24,16 @@ public class ProductServiceImpl extends ServiceImpl<IProductMapper, Product> imp
     @Transactional
     public boolean saveProduct(Product product) {
 
-        if (StringUtils.isBlank(product.getDescription())) {
-            return false;
-        }
-        return true;
+        return StringUtils.isBlank(product.getDescription());
     }
 
     @Override
     @Transactional
     public boolean saveOrUpdate(Product product) {
 
-        if (StringUtils.isBlank(product.getDescription())) {
-            throw  new RuntimeException("产品描述不可为空");
+        RequiredParameterValidator.Result result = RequiredParameterValidator.validate(product, "description");
+        if (!result.isSuccess()) {
+            throw new RuntimeException(result.getMsg());
         }
         return true;
     }
