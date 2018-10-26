@@ -41,6 +41,28 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
     }
 
     /**
+     * 获取session中的属性值
+     *
+     * @param sessionKey session中value的key
+     * @return
+     */
+    public static Object getSessionAttribute(String sessionKey) {
+
+        return getSessionAttribute(getRequest(), sessionKey);
+    }
+
+    /**
+     * 获取请求头
+     *
+     * @param headerName 请求头名称
+     * @return
+     */
+    public static String getHeader(String headerName) {
+
+        return getRequest().getHeader(headerName);
+    }
+
+    /**
      * 获取请求参数
      *
      * @return
