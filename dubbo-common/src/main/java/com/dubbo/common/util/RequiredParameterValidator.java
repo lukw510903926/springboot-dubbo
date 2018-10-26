@@ -20,7 +20,7 @@ public class RequiredParameterValidator {
     /**
      * 获取object对象属性中注解NotNull.class的并校验必填
      *
-     * @param object
+     * @param object 校验对象
      * @return
      */
     public static boolean validate(Object object) {
@@ -34,22 +34,27 @@ public class RequiredParameterValidator {
                 }
             });
         }
-        return validator(object, list);
+        return validate(object, list);
     }
 
     /**
      * 指定属性校验必填
      *
-     * @param object
-     * @param list
+     * @param object 校验对象
+     * @param list   属性列表
      * @return
      */
     public static boolean validate(Object object, String... list) {
 
-        return validator(object, Arrays.asList(list));
+        return validate(object, Arrays.asList(list));
     }
 
-    public static boolean validator(Object object, List<String> list) {
+    /**
+     * @param object 校验对象
+     * @param list   属性列表
+     * @return
+     */
+    public static boolean validate(Object object, List<String> list) {
 
         if (CollectionUtils.isEmpty(list)) {
             return true;
