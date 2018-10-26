@@ -23,7 +23,7 @@ public class RequiredParameterValidator {
      * @param object
      * @return
      */
-    public static boolean validate(Object object) {
+    public static Result validate(Object object) {
 
         List<Field> fields = ReflectionUtils.getFields(object);
         List<String> list = new ArrayList<>();
@@ -44,15 +44,15 @@ public class RequiredParameterValidator {
      * @param list
      * @return
      */
-    public static boolean validate(Object object, String... list) {
+    public static Result validate(Object object, String... list) {
 
         return validator(object, Arrays.asList(list));
     }
 
-    public static boolean validator(Object object, List<String> list) {
+    public static Result validator(Object object, List<String> list) {
 
         if (CollectionUtils.isEmpty(list)) {
-            return true;
+            return Result.result(null);
         }
         StringBuffer stringBuffer = new StringBuffer();
         List<Field> fields = ReflectionUtils.getFields(object);
@@ -70,6 +70,37 @@ public class RequiredParameterValidator {
                 }
             });
         }
-        return StringUtils.isEmpty(stringBuffer);
+        return Result.result(stringBuffer.toString());
+    }
+
+    public static class Result {
+
+        private boolean success;
+
+        private String msg;
+
+        static Result result(String msg) {
+
+            Result result = new Result();
+            result.setMsg(msg);
+            result.setSuccess(StringUtils.isBlank(msg));
+            return result;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        void setMsg(String msg) {
+            this.msg = msg;
+        }
     }
 }
