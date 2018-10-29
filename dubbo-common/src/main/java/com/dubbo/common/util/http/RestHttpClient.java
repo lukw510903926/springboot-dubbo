@@ -1,7 +1,6 @@
 package com.dubbo.common.util.http;
 
 import java.util.Map;
-
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -87,7 +85,8 @@ public class RestHttpClient {
         headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
         headers.add("Accept", MediaType.APPLICATION_JSON_UTF8.toString());
         if (MapUtils.isNotEmpty(header)) {
-            header.forEach((key, value) -> headers.add(key, value));
+//            header.forEach((key, value) -> headers.add(key, value));
+            header.forEach(headers::add);
         }
         return headers;
     }
