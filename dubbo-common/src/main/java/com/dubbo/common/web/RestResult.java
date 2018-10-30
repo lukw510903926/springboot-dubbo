@@ -1,7 +1,7 @@
 package com.dubbo.common.web;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -115,6 +115,11 @@ public class RestResult<T> implements Serializable {
         msg = StringUtils.isBlank(msg) ? "请求失败" : msg;
         restResult.setMsg(msg);
         return restResult;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
     }
 
     public Integer getCode() {
