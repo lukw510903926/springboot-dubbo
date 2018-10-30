@@ -2,6 +2,7 @@ package com.boot.dubbo.client.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +23,10 @@ public class UserController {
 		User user = new User();
 		user.setName("param");
 		return this.userService.findUser(user);
+	}
+
+	@GetMapping("/info")
+	public User getUser(){
+		return  this.userService.getUser();
 	}
 }
