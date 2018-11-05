@@ -41,7 +41,7 @@ GREP_KEY="Diname="${MODEL_SYMBOL}
 
 # CLASSPATH can bu define here
 CLASSPATH=${MODEL_LIBS}:.:../conf:${CLASSPATH}
-
+echo ${CLASSPATH}
 
 #----------------------------------------------------------
 # function print usage
