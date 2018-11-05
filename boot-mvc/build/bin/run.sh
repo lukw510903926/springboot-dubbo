@@ -10,6 +10,7 @@ MODEL_NAME=ESFLOW_MODELCONFIG_SERVICE
 
 # 模块运行需要的lib
 MODEL_LIBS=`ls ../lib/*.jar | paste -s -d":" -`
+echo ${MODEL_LIBS}
 
 # 选项  -Dlogback.configurationFile=../logback.xml
 MODEL_OPTS="-Duser.timezone=GMT+8 -Dspring.config.location=../application.properties"
@@ -68,24 +69,6 @@ else
 return 0
 fi
 }
-
-#-------------------------------------------------------------------
-# function check_user_id
-# return 0 ---- supper user
-# return 1 ---- normal user
-#-------------------------------------------------------------------
-
-# check_user_id ()
-# {
-# localMyId=$(id|awk '{print $1}')
-# localMyId=${localMyId:4:1}
-# if [ "${localMyId}" -eq "0" ]
-# then
-# return 0
-# else
-# return 1
-# fi
-# }
 
 #-------------------------------------------------------------------
 # function model_start
