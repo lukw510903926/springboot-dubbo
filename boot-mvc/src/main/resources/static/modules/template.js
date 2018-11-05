@@ -8,8 +8,9 @@ boot.template = {
 
     init: function () {
         var user = boot.template.initUser();
-        $('#template').setForm(user);
-        $('#textarea').val(JSON.stringify($('#template').getForm()));
+        var $template = $('#template');
+        $template.setForm(user);
+        $template.val(JSON.stringify($template.getForm()));
     },
 
     addBtn: function () {
