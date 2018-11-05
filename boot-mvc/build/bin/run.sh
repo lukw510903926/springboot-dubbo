@@ -3,7 +3,8 @@
 #-------------------------------------------------------------------
 # 定义变量
 #-------------------------------------------------------------------
-JAVA_HOME=/home/ipnet/jdk1.8.0_92
+JAVA_HOME='which java'
+echo ${JAVA_HOME}
 
 # 模块名
 MODEL_NAME=ESFLOW_MODELCONFIG_SERVICE
