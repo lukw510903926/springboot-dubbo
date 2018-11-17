@@ -13,7 +13,7 @@ public @interface Cacheable {
      * 缓存类型为hash时的 缓存名称
      * @return
      */
-    String cacheNames();
+    String cacheNames() default "";
 
     /**
      * key
