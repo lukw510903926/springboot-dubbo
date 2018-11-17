@@ -1,5 +1,6 @@
 package com.dubbo.common.util.http;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.http.HttpEntity;
@@ -12,8 +13,8 @@ import com.alibaba.fastjson.JSONObject;
 
 /**
  * @version V1.0
- * @Description: TODO(用一句话描述该文件做什么)
- * @author: yagnqi
+ * @Description: rest http 请求
+ * @author: yangqi
  * @email : yangqi@ywwl.com
  * @date: 2018年10月10日 下午7:05:47
  */
@@ -21,11 +22,18 @@ public class RestHttpClient {
 
     private static RestTemplate restTemplate = new RestTemplate();
 
+    private RestHttpClient(){}
+
     static {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(15000);
         requestFactory.setReadTimeout(10000);
         restTemplate.setRequestFactory(requestFactory);
+    }
+
+    public static String get(String url){
+
+        return get(url,String.class);
     }
 
     /**
@@ -52,6 +60,11 @@ public class RestHttpClient {
         return restTemplate.exchange(url, HttpMethod.GET, requestEntity, resultType).getBody();
     }
 
+    public static String post(String url,Object param){
+
+        return post(url,param,String.class);
+    }
+
     /**
      * @param url        请求参数
      * @param resultType 返回结果类型
@@ -59,9 +72,9 @@ public class RestHttpClient {
      * @param <V>
      * @return
      */
-    public static <V> V post(String url, Class<V> resultType, Object param) {
+    public static <V> V post(String url, Object param,Class<V> resultType) {
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(null));
+        HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(new HashMap<>()));
         return restTemplate.postForObject(url, requestEntity, resultType);
     }
 
@@ -73,7 +86,7 @@ public class RestHttpClient {
      * @param <V>
      * @return
      */
-    public static <V> V post(String url, Class<V> resultType, Object param, Map<String, String> header) {
+    public static <V> V post(String url, Object param,Class<V> resultType, Map<String, String> header) {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(header));
         return restTemplate.postForObject(url, requestEntity, resultType);
@@ -85,7 +98,6 @@ public class RestHttpClient {
         headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
         headers.add("Accept", MediaType.APPLICATION_JSON_UTF8.toString());
         if (MapUtils.isNotEmpty(header)) {
-//            header.forEach((key, value) -> headers.add(key, value));
             header.forEach(headers::add);
         }
         return headers;
