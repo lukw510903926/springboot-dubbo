@@ -1,0 +1,2 @@
+exceptionFilter=com.alibaba.dubbo.rpc.filter.ExceptionFilter
+providerExceptionFilter=com.boot.dubbo.server.config.ProviderExceptionFilter
