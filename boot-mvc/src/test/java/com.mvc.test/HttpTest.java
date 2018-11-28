@@ -23,6 +23,6 @@ public class HttpTest {
     public void post(){
 
         User user = new User();
-        System.out.println(RestHttpClient.post("http://localhost:8050/user/page/list",String.class,user));
+        System.out.println(RestHttpClient.post("http://localhost:8050/user/page/list",user,String.class));
     }
 }

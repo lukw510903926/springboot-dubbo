@@ -30,6 +30,7 @@
 			<dependency>
 				<groupId>com.boot.dubbo</groupId>
 				<artifactId>dubbo-common</artifactId>
+				<version>1.0.0</version>
 			</dependency>
 			<!--alibaba begin-->
 			<dependency>
