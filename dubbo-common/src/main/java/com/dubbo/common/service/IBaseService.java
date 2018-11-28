@@ -42,6 +42,11 @@ public interface IBaseService<T> extends IService<T> {
         return list(new QueryWrapper<>(t));
     }
 
+    default T getOne(T t){
+
+        return getOne(new QueryWrapper<>(t));
+    }
+
     default IPage<T> page(Page<T> page, T t) {
 
         if (ArrayUtils.isEmpty(page.descs()) && ArrayUtils.isEmpty(page.ascs())) {

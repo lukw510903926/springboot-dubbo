@@ -1,0 +1,22 @@
+spring:
+  datasource:
+#    schema: classpath:/db/schema-h2.sql
+#    data: classpath:/db/data-h2.sql
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test
+    username: root
+    password: root
+    continue-on-error: true
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  typeAliasesPackage: com.boot.dubbo.weChat.entity
+  global-config:
+    id-type: 2
+    field-strategy: 2
+    db-column-underline: true
+    refresh-mapper: true
+    logic-delete-value: 0
+    logic-not-delete-value: 1
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
