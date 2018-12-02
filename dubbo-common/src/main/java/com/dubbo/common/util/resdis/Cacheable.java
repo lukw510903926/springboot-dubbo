@@ -26,4 +26,10 @@ public @interface Cacheable {
      * @return
      */
     long expire() default 1800;
+
+    /**
+     * 返回结果类型
+     * @return
+     */
+    Class<?> resultType() default Object.class;
 }
