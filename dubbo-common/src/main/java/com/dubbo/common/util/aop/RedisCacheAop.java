@@ -12,13 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
 public class RedisCacheAop {
 
-    private final static Logger logger = LoggerFactory.getLogger(RedisCacheAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedisCacheAop.class);
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -40,7 +41,7 @@ public class RedisCacheAop {
         } else {
             value = redisTemplate.opsForValue().get(key);
         }
-        logger.info("cacheAble,name值：" + cacheName + ",key值：" + key);
+        logger.info("cacheAble,name值：{},key值：{}", cacheName, key);
         if (value == null) {
             value = joinPoint.proceed();
         }
@@ -55,7 +56,7 @@ public class RedisCacheAop {
         Method method = getMethod(joinPoint);
         CachePut cache = method.getAnnotation(CachePut.class);
         String key = SpringExpressionUtils.parseValue(cache.key(), method, joinPoint.getArgs(), String.class);
-        this.setCache( cache.cacheNames(), key, value, cache.expire());
+        this.setCache(cache.cacheNames(), key, value, cache.expire());
         return value;
     }
 
@@ -75,7 +76,7 @@ public class RedisCacheAop {
         } else {
             redisTemplate.delete(keyValue);
         }
-        logger.info("cacheDelete执行,name值：" + cache.cacheName() + ",key值：" + keyValue);
+        logger.info("cacheDelete执行,name值：{},key值：{}", cacheName, keyValue);
         return value;
     }
 
