@@ -35,12 +35,11 @@ public interface IBaseService<T> extends IService<T> {
             return false;
         }
         T t = list.get(0);
-        String idProperty;
         TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
         if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty())) {
             throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
         }
-        idProperty = tableInfo.getKeyProperty();
+        String idProperty = tableInfo.getKeyProperty();
         String oid = ReflectionUtils.getter(t, idProperty).toString();
         return oid.equals(uid);
     }
