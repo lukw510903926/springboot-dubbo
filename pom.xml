@@ -19,6 +19,7 @@
 		<mybatis-plus-boot-starter.version>3.0.4</mybatis-plus-boot-starter.version>
 		<HikariCP.version>2.4.13</HikariCP.version>
 		<fastjson.version>1.2.39</fastjson.version>
+		<spring.boot.dubbo.version>0.2.0</spring.boot.dubbo.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -36,7 +37,12 @@
 			<dependency>
 				<groupId>com.alibaba.boot</groupId>
 				<artifactId>dubbo-spring-boot-starter</artifactId>
-				<version>0.2.0</version>
+				<version>${spring.boot.dubbo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.boot</groupId>
+				<artifactId>dubbo-spring-boot-actuator</artifactId>
+				<version>${spring.boot.dubbo.version}</version>
 			</dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
