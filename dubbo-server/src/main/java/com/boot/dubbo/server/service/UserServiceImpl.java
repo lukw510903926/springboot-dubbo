@@ -17,7 +17,7 @@ import com.dubbo.common.util.exception.ServiceException;
  * @email : yangqi@ywwl.com
  * @date: 2018年10月10日 下午12:48:40
  */
-@Service(version = "${demo.service.version}", filter = {"exceptionFilter", "providerExceptionFilter"})
+@Service(filter = {"exceptionFilter", "providerExceptionFilter"})
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     @Override
