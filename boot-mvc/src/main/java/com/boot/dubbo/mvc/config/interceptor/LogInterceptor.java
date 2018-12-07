@@ -21,7 +21,7 @@ public class LogInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        logger.info("Interceptor : " + this.getClass());
+        logger.info("Interceptor : {}" , this.getClass());
         return true;
     }
 }
