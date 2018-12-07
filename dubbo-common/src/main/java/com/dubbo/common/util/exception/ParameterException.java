@@ -10,6 +10,7 @@ package com.dubbo.common.util.exception;
 
 public class ParameterException extends RuntimeException {
 
+    private static final long serialVersionUID = 3665101512516875715L;
     /**
      * 状态码
      */
