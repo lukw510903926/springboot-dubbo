@@ -1,8 +1,6 @@
 package com.boot.dubbo.weChat.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.boot.dubbo.weChat.dao.OrderMapper;
-import com.boot.dubbo.weChat.dao.ProductMapper;
 import com.boot.dubbo.weChat.entity.Order;
 import com.boot.dubbo.weChat.entity.Product;
 import com.boot.dubbo.weChat.service.IOrderService;
@@ -10,7 +8,7 @@ import com.boot.dubbo.weChat.service.IProductService;
 import com.boot.dubbo.weChat.service.WeChatService;
 import com.dubbo.common.util.IdUtil;
 import com.dubbo.common.util.exception.ServiceException;
-import com.dubbo.common.util.weChat.WxpayUtil;
+import com.dubbo.common.util.weChat.WxPayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,26 +52,26 @@ public class WeChatServiceImpl implements WeChatService {
         ServletInputStream in = request.getInputStream();
         int contentLength = request.getContentLength();
         if (contentLength <= 0) {
-            return WxpayUtil.notifyReturnFail("无xml数据");
+            return WxPayUtil.notifyReturnFail("无xml数据");
         }
         byte[] returnData = new byte[contentLength];
         in.read(returnData);
         String xmlStr = new String(returnData, "UTF-8");
         //判断数据
         if (StringUtils.isBlank(xmlStr)) {
-            return WxpayUtil.notifyReturnFail("xml数据为空");
+            return WxPayUtil.notifyReturnFail("xml数据为空");
         }
         //xml转map
-        Map<String, String> map = WxpayUtil.xmlToMap(xmlStr);
+        Map<String, String> map = WxPayUtil.xmlToMap(xmlStr);
         //判断订单状态
         if (!"SUCCESS".equals(map.get("return_code")) || !"SUCCESS".equals(map.get("result_code"))) {
-            return WxpayUtil.notifyReturnFail("支付返回数据异常：" + map.toString());
+            return WxPayUtil.notifyReturnFail("支付返回数据异常：" + map.toString());
         }
         //校验sign
         String signOrigin = map.get("sign");
-        String sign = WxpayUtil.generateSignature(map, mchKey, "MD5");
+        String sign = WxPayUtil.generateSignature(map, mchKey, "md5");
         if (!sign.equals(signOrigin)) {
-            return WxpayUtil.notifyReturnFail("sign校验失败");
+            return WxPayUtil.notifyReturnFail("sign校验失败");
         }
         //校验订单
         String outTradeNo = map.get("out_trade_no");
@@ -81,15 +79,15 @@ public class WeChatServiceImpl implements WeChatService {
         entity.setOrderNo(outTradeNo);
         Order khOrder = this.orderService.getOne(new QueryWrapper<>(entity));
         if (null == khOrder) {
-            return WxpayUtil.notifyReturnFail("订单不存在");
+            return WxPayUtil.notifyReturnFail("订单不存在");
         }
         //校验金额
         if (khOrder.getPrice() != Integer.parseInt(map.get("total_fee"))) {
-            return WxpayUtil.notifyReturnFail("用户实际支付金额和订单金额不相符");
+            return WxPayUtil.notifyReturnFail("用户实际支付金额和订单金额不相符");
         }
         //判断是否已更新状态
         if (khOrder.getIsPay() == 1) {
-            return WxpayUtil.notifyReturnFail("订单支付状态已更新，无需重复操作");
+            return WxPayUtil.notifyReturnFail("订单支付状态已更新，无需重复操作");
         }
         //更新订单状态
         khOrder.setIsPay(1);
@@ -99,9 +97,9 @@ public class WeChatServiceImpl implements WeChatService {
 
         boolean n = this.orderService.updateById(khOrder);
         if (n) {
-            return WxpayUtil.notifyReturnSuccess();
+            return WxPayUtil.notifyReturnSuccess();
         }
-        return WxpayUtil.notifyReturnFail("更新订单状态失败");
+        return WxPayUtil.notifyReturnFail("更新订单状态失败");
     }
 
     /**
@@ -134,33 +132,33 @@ public class WeChatServiceImpl implements WeChatService {
         SortedMap<String, String> data = new TreeMap<>();
         data.put("appid", appId);
         data.put("mch_id", mchId);
-        data.put("nonce_str", WxpayUtil.getNonceStr());
-        data.put("sign_type", "MD5");
+        data.put("nonce_str", WxPayUtil.getNonceStr());
+        data.put("sign_type", "md5");
         data.put("body", "游戏支付");
         data.put("out_trade_no", orderNo);
         data.put("total_fee", goods.getGamePrice().toString());
-        data.put("spbill_create_ip", WxpayUtil.getIp(request));
+        data.put("spbill_create_ip", WxPayUtil.getIp(request));
         data.put("notify_url", notifyUrl);
         data.put("trade_type", "JSAPI");
         data.put("openid", "odU5Cv3t7jW7di0y-P-KWsbM8Kz0");
         //统一下单
-        String sign = WxpayUtil.generateSignature(data, mchKey, "MD5");
+        String sign = WxPayUtil.generateSignature(data, mchKey, "md5");
         data.put("sign", sign);
-        String xml = WxpayUtil.mapToXml(data);
+        String xml = WxPayUtil.mapToXml(data);
         String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        String resultXml = WxpayUtil.requestXML(url, xml);
+        String resultXml = WxPayUtil.requestXML(url, xml);
         //返回结果转换
-        Map<String, String> resultMap = WxpayUtil.xmlToMap(resultXml);
+        Map<String, String> resultMap = WxPayUtil.xmlToMap(resultXml);
         log.info("创建支付请求数据：" + xml);
         log.info("创建支付返回数据：" + resultMap.toString());
         if ("SUCCESS".equals(resultMap.get("return_code")) && "SUCCESS".equals(resultMap.get("result_code"))) {
             Map<String, String> params = new TreeMap<>();
             params.put("appId", resultMap.get("appid"));
-            params.put("timeStamp", WxpayUtil.getCurrentTimestamp());
-            params.put("nonceStr", WxpayUtil.getNonceStr());
+            params.put("timeStamp", WxPayUtil.getCurrentTimestamp());
+            params.put("nonceStr", WxPayUtil.getNonceStr());
             params.put("package", "prepay_id=" + resultMap.get("prepay_id"));
-            params.put("signType", "MD5");
-            String paySign = WxpayUtil.generateSignature(params, mchKey, "MD5");
+            params.put("signType", "md5");
+            String paySign = WxPayUtil.generateSignature(params, mchKey, "md5");
             params.put("paySign", paySign);
             params.put("orderNo", orderNo);
             //生成订单记录
