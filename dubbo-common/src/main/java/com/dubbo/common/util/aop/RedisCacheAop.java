@@ -50,7 +50,7 @@ public class RedisCacheAop {
     }
 
     @Around("@annotation(com.dubbo.common.util.resdis.CachePut)")
-    public Object CachePut(final ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object cachePut(final ProceedingJoinPoint joinPoint) throws Throwable {
 
         Object value = joinPoint.proceed();
         Method method = getMethod(joinPoint);
