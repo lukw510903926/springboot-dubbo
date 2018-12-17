@@ -41,7 +41,7 @@ public interface IBaseService<T> extends IService<T> {
         }
         String idProperty = tableInfo.getKeyProperty();
         String oid = ReflectionUtils.getter(t, idProperty).toString();
-        return oid.equals(uid);
+        return oid.equals(uid + "");
     }
 
     default List<T> list(T t) {
