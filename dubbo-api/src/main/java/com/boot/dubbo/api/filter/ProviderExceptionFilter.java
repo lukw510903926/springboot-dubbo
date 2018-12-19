@@ -1,4 +1,4 @@
-package com.boot.dubbo.server.config;
+package com.boot.dubbo.api.filter;
 
 import com.alibaba.dubbo.common.utils.ReflectUtils;
 import com.alibaba.dubbo.common.utils.StringUtils;
