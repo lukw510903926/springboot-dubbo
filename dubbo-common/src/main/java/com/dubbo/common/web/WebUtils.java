@@ -1,5 +1,8 @@
 package com.dubbo.common.web;
 
+import com.alibaba.fastjson.JSONObject;
+import com.dubbo.common.web.filter.ChannelFilter;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -9,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -87,6 +91,12 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         while (enumPks.hasMoreElements()) {
             paramName = enumPks.nextElement();
             map.put(paramName, request.getParameter(paramName));
+        }
+
+        //@requestBody 注解接收参数处理 需注册ChannelFilter
+        if (MapUtils.isEmpty(map)) {
+            Object requestBody = request.getAttribute(ChannelFilter.REQUEST_BODY);
+            return Optional.ofNullable(requestBody).map(body -> JSONObject.parseObject(body.toString())).map(JSONObject::getInnerMap).orElse(map);
         }
         return map;
     }
