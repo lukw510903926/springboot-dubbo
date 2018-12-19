@@ -1,0 +1,1 @@
+clientTokenFilter=com.boot.dubbo.api.filter.ClientTokenFilter
