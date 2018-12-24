@@ -17,6 +17,9 @@ import java.util.*;
 
 public class RequiredParameterValidator {
 
+    private RequiredParameterValidator() {
+    }
+
     /**
      * 获取object对象属性中注解NotNull.class的并校验必填
      *
@@ -54,7 +57,7 @@ public class RequiredParameterValidator {
         if (CollectionUtils.isEmpty(list)) {
             return Result.result(null);
         }
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         List<Field> fields = ReflectionUtils.getFields(object);
         Map<String, Field> fieldMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(fields)) {
