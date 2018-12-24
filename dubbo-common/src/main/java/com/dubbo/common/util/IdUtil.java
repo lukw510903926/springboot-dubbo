@@ -28,6 +28,8 @@ public class IdUtil {
         MACHINE_ID = hardwareAbstractionLayer.getNetworkIFs()[0].getMacaddr().replace(":", "").toUpperCase();
     }
 
+    private IdUtil(){}
+
     public static String uuid() {
 
         return UUID.randomUUID().toString().replace("-", "");
