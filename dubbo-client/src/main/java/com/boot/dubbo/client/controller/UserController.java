@@ -28,7 +28,7 @@ public class UserController {
 
 	@RequestMapping("/list")
 	public List<User> sayHello() {
-		
+
 		User user = new User();
 		user.setName("param");
 		logger.info("applicationConfig :{}",applicationConfig);
