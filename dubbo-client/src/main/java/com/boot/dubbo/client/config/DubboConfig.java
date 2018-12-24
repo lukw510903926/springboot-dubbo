@@ -26,7 +26,7 @@ public class DubboConfig {
     private ConsumerConfig consumerConfig;
 
     @Bean
-    public IProductService referenceConfig() {
+    public IProductService productService() {
 
         ReferenceConfig<IProductService> referenceConfig = new ReferenceConfig<>();
         referenceConfig.setInterface(IProductService.class);
