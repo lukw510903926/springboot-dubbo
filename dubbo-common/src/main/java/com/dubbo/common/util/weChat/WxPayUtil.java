@@ -150,8 +150,8 @@ public class WxPayUtil {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            org.w3c.dom.Document document = documentBuilder.newDocument();
-            org.w3c.dom.Element root = document.createElement("xml");
+            Document document = documentBuilder.newDocument();
+            Element root = document.createElement("xml");
             document.appendChild(root);
             for (String key : data.keySet()) {
                 String value = data.get(key);
@@ -214,7 +214,6 @@ public class WxPayUtil {
      * @param urlStr
      * @param xmlStr
      * @return
-     * @throws Exception
      */
     public static String requestXML(String urlStr, String xmlStr) {
 
