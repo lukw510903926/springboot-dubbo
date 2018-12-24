@@ -4,6 +4,8 @@ import com.dubbo.common.util.exception.ServiceException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -30,7 +32,7 @@ public class WxPayUtil {
 
     private static Logger logger = LoggerFactory.getLogger(WxPayUtil.class);
 
-    private static  final String CHART_SET = "UTF-8";
+    private static final String CHART_SET = "UTF-8";
 
     private WxPayUtil() {
     }
@@ -41,7 +43,7 @@ public class WxPayUtil {
      * @return
      */
     public static String getCurrentTimestamp() {
-        long l = new Date().getTime() / 1000;
+        long l = System.currentTimeMillis() / 1000;
         return String.valueOf(l);
     }
 
@@ -72,8 +74,10 @@ public class WxPayUtil {
             if (k.equals("sign")) {
                 continue;
             }
-            if (data.get(k).trim().length() > 0) // 参数值为空，则不参与签名
+            // 参数值为空，则不参与签名
+            if (StringUtils.isNotBlank(data.get(k).trim())) {
                 sb.append(k).append("=").append(data.get(k).trim()).append("&");
+            }
         }
         sb.append("key=").append(key);
         if ("md5".equals(signType)) {
@@ -155,7 +159,7 @@ public class WxPayUtil {
                     value = "";
                 }
                 value = value.trim();
-                org.w3c.dom.Element filed = document.createElement(key);
+                Element filed = document.createElement(key);
                 filed.appendChild(document.createTextNode(value));
                 root.appendChild(filed);
             }
@@ -180,7 +184,6 @@ public class WxPayUtil {
      *
      * @param strXML XML字符串
      * @return XML数据转换后的Map
-     * @throws Exception
      */
     public static Map<String, String> xmlToMap(String strXML) {
         try {
@@ -188,7 +191,7 @@ public class WxPayUtil {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             InputStream stream = new ByteArrayInputStream(strXML.getBytes(CHART_SET));
-            org.w3c.dom.Document doc = documentBuilder.parse(stream);
+            Document doc = documentBuilder.parse(stream);
             doc.getDocumentElement().normalize();
             NodeList nodeList = doc.getDocumentElement().getChildNodes();
             for (int idx = 0; idx < nodeList.getLength(); ++idx) {
@@ -227,7 +230,7 @@ public class WxPayUtil {
             out.flush();
             out.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             String line;
             while ((line = br.readLine()) != null) {
                 buffer.append(line);
