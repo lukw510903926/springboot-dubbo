@@ -37,7 +37,7 @@ public class IdUtil {
 
     public static String generate(String prefix) {
 
-        if (!StringUtils.isBlank(prefix) && prefix.length() <= 4) {
+        if (StringUtils.isNotBlank(prefix) && prefix.length() <= 4) {
             int seed = SEED.get();
             int random = ThreadLocalRandom.current().nextInt(0, 9999);
             Serializable[] tempArray = {System.currentTimeMillis(), random, Thread.currentThread().getId(), MACHINE_ID, seed};
