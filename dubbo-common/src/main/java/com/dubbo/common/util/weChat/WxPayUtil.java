@@ -1,6 +1,7 @@
 package com.dubbo.common.util.weChat;
 
 import com.dubbo.common.util.exception.ServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.util.*;
 /**
  * 微信支付工具类
  */
+@Slf4j
 public class WxPayUtil {
 
     private static Logger logger = LoggerFactory.getLogger(WxPayUtil.class);
@@ -281,5 +283,30 @@ public class WxPayUtil {
         map.put("return_code", "FAIL");
         map.put("return_msg", "notify失败：" + msg);
         return mapToXml(map);
+    }
+
+    public static List<String> sendRequestXml(String urlStr,String xmlStr){
+
+        List<String> result = new ArrayList<>();
+        try {
+            URL url = new URL(urlStr);
+            URLConnection con = url.openConnection();
+            con.setDoOutput(true);
+            con.setRequestProperty("Pragma", "no-cache");
+            con.setRequestProperty("Cache-Control", "no-cache");
+            con.setRequestProperty("Content-Type", "text/xml");
+            OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
+            out.write(new String(xmlStr.getBytes(CHART_SET)));
+            out.flush();
+            out.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null){
+                result.add(line);
+            }
+        }catch(Exception ex) {
+            log.error("账单下载报错", ex);
+        }
+        return result;
     }
 }
