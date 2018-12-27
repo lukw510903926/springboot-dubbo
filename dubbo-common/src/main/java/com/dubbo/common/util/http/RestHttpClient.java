@@ -24,10 +24,6 @@ public class RestHttpClient {
 
     private static RestTemplate restTemplate = new RestTemplate();
 
-    private static final MediaType APPLICATION_JSON_UTF8 = MediaType.APPLICATION_JSON_UTF8;
-
-    private static final MediaType MULTIPART_FORM_DATA = MediaType.MULTIPART_FORM_DATA;
-
     private RestHttpClient() {
     }
 
@@ -63,7 +59,7 @@ public class RestHttpClient {
      */
     public static <V> V get(String url, Class<V> resultType, Map<String, String> header) {
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(header(header, APPLICATION_JSON_UTF8));
+        HttpEntity<String> requestEntity = new HttpEntity<>(header(header, MediaType.APPLICATION_JSON_UTF8));
         return restTemplate.exchange(url, HttpMethod.GET, requestEntity, resultType).getBody();
     }
 
@@ -98,7 +94,7 @@ public class RestHttpClient {
      */
     public static <V> V post(String url, Object param, Class<V> resultType, Map<String, String> header) {
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(header, APPLICATION_JSON_UTF8));
+        HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(header, MediaType.APPLICATION_JSON_UTF8));
         return restTemplate.postForObject(url, requestEntity, resultType);
     }
 
@@ -139,7 +135,7 @@ public class RestHttpClient {
      */
     public static <V> V postForm(String url, MultiValueMap<String, Object> param, Class<V> resultType, Map<String, String> header) {
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(param, header(header, MULTIPART_FORM_DATA));
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(param, header(header, MediaType.MULTIPART_FORM_DATA));
         return restTemplate.postForObject(url, requestEntity, resultType);
     }
 
