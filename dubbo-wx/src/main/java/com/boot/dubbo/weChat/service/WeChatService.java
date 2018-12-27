@@ -1,5 +1,6 @@
 package com.boot.dubbo.weChat.service;
 
+import com.boot.dubbo.weChat.entity.Order;
 import com.dubbo.common.util.weChat.WeChatProperties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ public interface WeChatService{
      * @return
      * @throws Exception
      */
-    String wxpayNotify(String mchKey, HttpServletRequest request) throws Exception ;
+    Order wxPayNotify(String mchKey, HttpServletRequest request) throws Exception ;
 
     /**
      * 创建订单
