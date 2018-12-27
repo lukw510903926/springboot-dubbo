@@ -82,9 +82,9 @@ public class WxPayUtil {
             }
         }
         sb.append("key=").append(key);
-        if ("md5".equals(signType)) {
+        if ("md5".equalsIgnoreCase(signType)) {
             return md5(sb.toString());
-        } else if ("hmacSha256".equals(signType)) {
+        } else if ("hmacSha256".equalsIgnoreCase(signType)) {
             return hmacSha256(sb.toString(), key);
         } else {
             throw new ServiceException(String.format("Invalid signType: %s", signType));
@@ -304,6 +304,7 @@ public class WxPayUtil {
             while ((line = br.readLine()) != null){
                 result.add(line);
             }
+            br.close();
         }catch(Exception ex) {
             log.error("账单下载报错", ex);
         }
