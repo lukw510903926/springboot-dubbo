@@ -201,8 +201,8 @@ public class WeChatServiceImpl implements WeChatService {
             List<String> results = WxPayUtil.sendRequestXml(DOWN_LOAD_BILL_URL, xml);
             log.info("result : {}", results);
         } catch (Exception ex) {
-            log.error("下载微信账单失败", ex);
-            throw new ServiceException(ex.getCause());
+            log.error("下载微信账单失败 {}", ex);
+            throw new ServiceException("下载微信账单失败");
         }
     }
 }
