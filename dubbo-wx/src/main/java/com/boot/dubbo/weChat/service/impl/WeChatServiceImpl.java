@@ -9,6 +9,7 @@ import com.boot.dubbo.weChat.service.WeChatService;
 import com.dubbo.common.util.IdUtil;
 import com.dubbo.common.util.exception.ServiceException;
 import com.dubbo.common.util.weChat.WeChatProperties;
+import com.dubbo.common.util.weChat.WeChatUser;
 import com.dubbo.common.util.weChat.WxPayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -44,59 +45,69 @@ public class WeChatServiceImpl implements WeChatService {
     private static final String SUCCESS = "SUCCESS";
 
     /**
+     * 微信账单下载
+     */
+    private static final String DOWN_LOAD_BILL_URL = "https://api.mch.weixin.qq.com/pay/downloadbill";
+
+    /**
+     * 微信创建订单
+     */
+    private static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+    /**
      * 微信支付回调
      *
      * @param request
      * @return
-     * @throws Exception
      */
-    public Order wxPayNotify(String mchKey, HttpServletRequest request) throws Exception {
+    @Override
+    public Order wxPayNotify(String mchKey, HttpServletRequest request) {
 
-        //接收xml
-        int contentLength = request.getContentLength();
-        if (contentLength <= 0) {
-            throw new ServiceException("无xml数据");
+        try {
+            String xml = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8.toString());
+            //判断数据
+            if (StringUtils.isBlank(xml)) {
+                throw new ServiceException("订单数据为空");
+            }
+            //xml转map
+            Map<String, String> map = WxPayUtil.xmlToMap(xml);
+            //判断订单状态
+            if (!SUCCESS.equals(map.get("return_code")) || !SUCCESS.equals(map.get("result_code"))) {
+                throw new ServiceException("支付返回数据异常：" + map.toString());
+            }
+            //校验sign
+            String signOrigin = map.get("sign");
+            String sign = WxPayUtil.generateSignature(map, mchKey, "md5");
+            if (!sign.equals(signOrigin)) {
+                throw new ServiceException("认证签名校验失败");
+            }
+            //校验订单
+            String outTradeNo = map.get("out_trade_no");
+            Order entity = new Order();
+            entity.setOrderNo(outTradeNo);
+            Order order = this.orderService.getOne(new QueryWrapper<>(entity));
+            if (null == order) {
+                throw new ServiceException("订单不存在");
+            }
+            //校验金额
+            if (!(order.getPrice() + "").equals(map.get("total_fee"))) {
+                throw new ServiceException("用户实际支付金额和订单金额不相符");
+            }
+            //判断是否已更新状态
+            if (order.getIsPay() != null && order.getIsPay() == 1) {
+                throw new ServiceException("订单支付已支付，无需重复操作");
+            }
+            //更新订单状态
+            order.setIsPay(1);
+            order.setPayAt(new Date());
+            order.setUpdatedAt(new Date());
+            order.setTransactionId(map.get("transaction_id"));
+            this.orderService.updateById(order);
+            return order;
+        } catch (Exception e) {
+            log.error("支付回调失败 : {}",e);
+            throw new ServiceException("支付回调失败 ");
         }
-        String xmlStr = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8.toString());
-        //判断数据
-        if (StringUtils.isBlank(xmlStr)) {
-            throw new ServiceException("xml数据为空");
-        }
-        //xml转map
-        Map<String, String> map = WxPayUtil.xmlToMap(xmlStr);
-        //判断订单状态
-        if (!SUCCESS.equals(map.get("return_code")) || !SUCCESS.equals(map.get("result_code"))) {
-            throw new ServiceException("支付返回数据异常：" + map.toString());
-        }
-        //校验sign
-        String signOrigin = map.get("sign");
-        String sign = WxPayUtil.generateSignature(map, mchKey, "md5");
-        if (!sign.equals(signOrigin)) {
-            throw new ServiceException("sign校验失败");
-        }
-        //校验订单
-        String outTradeNo = map.get("out_trade_no");
-        Order entity = new Order();
-        entity.setOrderNo(outTradeNo);
-        Order order = this.orderService.getOne(new QueryWrapper<>(entity));
-        if (null == order) {
-            throw new ServiceException("订单不存在");
-        }
-        //校验金额
-        if (!(order.getPrice() + "").equals(map.get("total_fee"))) {
-            throw new ServiceException("用户实际支付金额和订单金额不相符");
-        }
-        //判断是否已更新状态
-        if (order.getIsPay() != null && order.getIsPay() == 1) {
-            throw new ServiceException("订单支付状态已更新，无需重复操作");
-        }
-        //更新订单状态
-        order.setIsPay(1);
-        order.setPayAt(new Date());
-        order.setUpdatedAt(new Date());
-        order.setTransactionId(map.get("transaction_id"));
-        this.orderService.updateById(order);
-        return order;
     }
 
     /**
@@ -105,7 +116,8 @@ public class WeChatServiceImpl implements WeChatService {
      * @param goodsId
      * @return
      */
-    public Map<String, String> create(String goodsId, HttpServletRequest request) {
+    @Override
+    public Map<String, String> create(String goodsId, WeChatUser weChatUser, HttpServletRequest request) {
 
         //通过goodsId取游戏价格
         Product entity = new Product();
@@ -137,8 +149,7 @@ public class WeChatServiceImpl implements WeChatService {
         String sign = WxPayUtil.generateSignature(data, weChatProperties.getMchKey(), "md5");
         data.put("sign", sign);
         String xml = WxPayUtil.mapToXml(data);
-        String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        String resultXml = WxPayUtil.requestXML(url, xml);
+        String resultXml = WxPayUtil.requestXML(PAY_URL, xml);
         //返回结果转换
         Map<String, String> resultMap = WxPayUtil.xmlToMap(resultXml);
         log.info("创建支付请求数据：" + xml);
@@ -155,8 +166,8 @@ public class WeChatServiceImpl implements WeChatService {
             params.put("orderNo", orderNo);
             //生成订单记录
             Order khOrder = new Order();
-            khOrder.setUserId("2");
-            khOrder.setNickname("yangqi");
+            khOrder.setUserId(weChatUser.getUserId());
+            khOrder.setNickname(weChatUser.getNickName());
             khOrder.setOrderNo(orderNo);
             khOrder.setOriginPrice(goods.getOriginPrice());
             khOrder.setPrice(goods.getGamePrice());
@@ -173,7 +184,7 @@ public class WeChatServiceImpl implements WeChatService {
     }
 
     @Override
-    public void download(WeChatProperties weChatProperties, String billDate) {
+    public void download(String billDate) {
 
         Map<String, String> data = new TreeMap<>();
         data.put("appid", weChatProperties.getAppId());
@@ -187,8 +198,7 @@ public class WeChatServiceImpl implements WeChatService {
             String sign = WxPayUtil.generateSignature(data, weChatProperties.getMchKey(), "MD5");
             data.put("sign", sign);
             String xml = WxPayUtil.mapToXml(data);
-            String url = "https://api.mch.weixin.qq.com/pay/downloadbill";
-            List<String> results = WxPayUtil.sendRequestXml(url, xml);
+            List<String> results = WxPayUtil.sendRequestXml(DOWN_LOAD_BILL_URL, xml);
             log.info("result : {}", results);
         } catch (Exception ex) {
             log.error("下载微信账单失败", ex);

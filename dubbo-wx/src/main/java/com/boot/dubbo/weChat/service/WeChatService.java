@@ -1,7 +1,7 @@
 package com.boot.dubbo.weChat.service;
 
 import com.boot.dubbo.weChat.entity.Order;
-import com.dubbo.common.util.weChat.WeChatProperties;
+import com.dubbo.common.util.weChat.WeChatUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -20,21 +20,19 @@ public interface WeChatService{
      * 微信支付回调
      * @param request
      * @return
-     * @throws Exception
      */
-    Order wxPayNotify(String mchKey, HttpServletRequest request) throws Exception ;
+    Order wxPayNotify(String mchKey, HttpServletRequest request);
 
     /**
      * 创建订单
      * @param goodsId
      * @return
      */
-    Map<String,String> create(String goodsId, HttpServletRequest request) throws Exception ;
+    Map<String,String> create(String goodsId, WeChatUser weChatUser, HttpServletRequest request);
 
     /**
      * 下载微信账单
-     * @param weChatProperties
      * @param billDate
      */
-    void download(WeChatProperties weChatProperties,String billDate);
+    void download(String billDate);
 }
