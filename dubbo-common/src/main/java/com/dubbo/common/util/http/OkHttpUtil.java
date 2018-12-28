@@ -1,6 +1,5 @@
 package com.dubbo.common.util.http;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -141,7 +140,7 @@ public class OkHttpUtil {
             }
             ResponseBody body = response.body();
             return body == null ? null : body.string();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error("request fail !! {}", e);
             throw new ServiceException("请求失败");
         }
