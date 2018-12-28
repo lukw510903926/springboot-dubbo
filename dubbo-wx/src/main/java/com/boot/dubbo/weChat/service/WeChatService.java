@@ -21,7 +21,7 @@ public interface WeChatService{
      * @param request
      * @return
      */
-    Order wxPayNotify(String mchKey, HttpServletRequest request);
+    Order wxPayNotify(HttpServletRequest request);
 
     /**
      * 创建订单

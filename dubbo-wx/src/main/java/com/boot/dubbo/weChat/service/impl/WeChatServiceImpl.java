@@ -61,7 +61,7 @@ public class WeChatServiceImpl implements WeChatService {
      * @return
      */
     @Override
-    public Order wxPayNotify(String mchKey, HttpServletRequest request) {
+    public Order wxPayNotify(HttpServletRequest request) {
 
         try {
             String xml = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8.toString());
@@ -77,7 +77,7 @@ public class WeChatServiceImpl implements WeChatService {
             }
             //校验sign
             String signOrigin = map.get("sign");
-            String sign = WxPayUtil.generateSignature(map, mchKey, "md5");
+            String sign = WxPayUtil.generateSignature(map, weChatProperties.getMchKey(), "md5");
             if (!sign.equals(signOrigin)) {
                 throw new ServiceException("认证签名校验失败");
             }

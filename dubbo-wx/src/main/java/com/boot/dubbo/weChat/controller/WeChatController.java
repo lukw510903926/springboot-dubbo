@@ -43,7 +43,7 @@ public class WeChatController {
 
     @RequestMapping("/notify")
     public void wxPayNotify(HttpServletRequest request) {
-        weChatService.wxPayNotify("mchKey", request);
+        weChatService.wxPayNotify(request);
     }
 
 }
