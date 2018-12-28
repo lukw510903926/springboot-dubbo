@@ -6,7 +6,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
@@ -23,6 +22,8 @@ import java.util.Optional;
  * @since 2018/10/16 16:38
  **/
 public class WebUtils extends org.springframework.web.util.WebUtils {
+
+    private static final String _SESSION_LOGIN_USER = "_session_login_user";
 
     /**
      * 获取请求 request
@@ -64,6 +65,26 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
     public static void setSessionAttribute(String sessionKey, Object value) {
 
         setSessionAttribute(getRequest(), sessionKey, value);
+    }
+
+    /**
+     * 设置登录用户
+     *
+     * @param loginUser
+     */
+    public static void setLoginUser(LoginUser loginUser) {
+
+        setSessionAttribute(_SESSION_LOGIN_USER, loginUser);
+    }
+
+    /**
+     * 获取登录用户
+     *
+     * @return
+     */
+    public static LoginUser getLoginUser() {
+
+        return (LoginUser) getSessionAttribute(_SESSION_LOGIN_USER);
     }
 
     /**
