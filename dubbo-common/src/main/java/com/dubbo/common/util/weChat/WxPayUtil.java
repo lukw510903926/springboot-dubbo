@@ -104,7 +104,7 @@ public class WxPayUtil {
             byte[] array = md.digest(data.getBytes(CHART_SET));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
-                sb.append(Integer.toHexString((item & 0xFF) | 0x100).substring(1, 3));
+                sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class WxPayUtil {
             byte[] array = sha256HMAC.doFinal(data.getBytes(CHART_SET));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
-                sb.append(Integer.toHexString((item & 0xFF) | 0x100).substring(1, 3));
+                sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
