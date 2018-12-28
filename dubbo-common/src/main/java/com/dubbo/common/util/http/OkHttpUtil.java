@@ -3,15 +3,11 @@ package com.dubbo.common.util.http;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 import com.dubbo.common.util.exception.ServiceException;
 import okhttp3.*;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONObject;
@@ -51,7 +47,7 @@ public class OkHttpUtil {
     public static String get(String url, Map<String, String> headers) {
 
         Request.Builder builder = createBuilder(url);
-        headers.forEach(builder::addHeader);
+        header(builder, headers);
         return execute(builder.get().build());
     }
 
@@ -80,7 +76,7 @@ public class OkHttpUtil {
     public static String post(String url, Map<String, String> params, Map<String, String> headers) {
 
         Request.Builder builder = createBuilder(url);
-        headers.forEach(builder::addHeader);
+        header(builder, headers);
         return execute(builder.post(formBody(params)).build());
     }
 
@@ -109,7 +105,7 @@ public class OkHttpUtil {
     public static String postJSON(String url, Map<String, String> params, Map<String, String> headers) {
 
         Request.Builder builder = createBuilder(url);
-        headers.forEach(builder::addHeader);
+        header(builder, headers);
         RequestBody requestBody = RequestBody.create(MEDIA_TYPE, JSONObject.toJSONString(params));
         return execute(builder.url(url).post(requestBody).build());
     }
@@ -155,25 +151,21 @@ public class OkHttpUtil {
         return new Request.Builder().url(url);
     }
 
+
+    private static void header(Request.Builder builder, Map<String, String> headers) {
+        headers.forEach(builder::addHeader);
+    }
+
     /**
      * 请求body
      *
      * @param params
      * @return
      */
-    public static RequestBody formBody(Map<String, String> params) {
+    private static RequestBody formBody(Map<String, String> params) {
 
         Builder builder = new Builder();
-        Map<String, String> treeMap = new TreeMap<>(params);
-        Set<Entry<String, String>> set = treeMap.entrySet();
-        for (Entry<String, String> entry : set) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (StringUtils.isNotBlank(value)) {
-                builder.add(key, value);
-            }
-        }
+        params.forEach(builder::add);
         return builder.build();
     }
-
 }
