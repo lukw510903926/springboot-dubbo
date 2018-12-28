@@ -2,6 +2,7 @@ package com.boot.dubbo.weChat.controller;
 
 
 import com.boot.dubbo.weChat.service.WeChatService;
+import com.dubbo.common.util.weChat.WeChatUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,27 +23,27 @@ import java.util.Map;
 @Slf4j
 @Controller
 public class WeChatController {
-    
+
     @Autowired
     private WeChatService weChatService;
-    
-    @RequestMapping("/test")
-    public String test(Model model, HttpServletRequest request) throws Exception {
 
-        Map<String,String> result = weChatService.create("1",request);
-        log.info("result : {}",result);
-        model.addAttribute("appId",result.get("appId"));
-        model.addAttribute("timeStamp",result.get("timeStamp"));
-        model.addAttribute("nonceStr",result.get("nonceStr"));
-        model.addAttribute("package",result.get("package"));
-        model.addAttribute("signType",result.get("signType"));
-        model.addAttribute("paySign",result.get("paySign"));
+    @RequestMapping("/test")
+    public String test(Model model, HttpServletRequest request) {
+
+        Map<String, String> result = weChatService.create("1", new WeChatUser(), request);
+        log.info("result : {}", result);
+        model.addAttribute("appId", result.get("appId"));
+        model.addAttribute("timeStamp", result.get("timeStamp"));
+        model.addAttribute("nonceStr", result.get("nonceStr"));
+        model.addAttribute("package", result.get("package"));
+        model.addAttribute("signType", result.get("signType"));
+        model.addAttribute("paySign", result.get("paySign"));
         return "pay_test";
     }
 
     @RequestMapping("/notify")
-    public void wxPayNotify(HttpServletRequest request) throws Exception {
-        weChatService.wxPayNotify("mchKey",request);
+    public void wxPayNotify(HttpServletRequest request) {
+        weChatService.wxPayNotify("mchKey", request);
     }
 
 }
