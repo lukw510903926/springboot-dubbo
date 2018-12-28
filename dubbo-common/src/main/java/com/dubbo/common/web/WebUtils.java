@@ -23,7 +23,7 @@ import java.util.Optional;
  **/
 public class WebUtils extends org.springframework.web.util.WebUtils {
 
-    private static final String _SESSION_LOGIN_USER = "_session_login_user";
+    private static final String SESSION_LOGIN_USER = "_session_login_user";
 
     /**
      * 获取请求 request
@@ -74,7 +74,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
      */
     public static void setLoginUser(LoginUser loginUser) {
 
-        setSessionAttribute(_SESSION_LOGIN_USER, loginUser);
+        setSessionAttribute(SESSION_LOGIN_USER, loginUser);
     }
 
     /**
@@ -84,7 +84,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
      */
     public static LoginUser getLoginUser() {
 
-        return (LoginUser) getSessionAttribute(_SESSION_LOGIN_USER);
+        return (LoginUser) getSessionAttribute(SESSION_LOGIN_USER);
     }
 
     /**
