@@ -21,9 +21,9 @@ public class OkHttpUtil {
 
     private static Logger logger = LoggerFactory.getLogger(OkHttpUtil.class);
 
-    private static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
 
-    private static final OkHttpClient client = new OkHttpClient().newBuilder().readTimeout(10, TimeUnit.SECONDS)
+    private static final OkHttpClient CLIENT = new OkHttpClient().newBuilder().readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build();
 
     private OkHttpUtil() {
@@ -94,7 +94,7 @@ public class OkHttpUtil {
     public static String postJSON(String url, Map<String, String> params) {
 
         Request.Builder builder = createBuilder(url);
-        RequestBody requestBody = RequestBody.create(mediaType, JSONObject.toJSONString(params));
+        RequestBody requestBody = RequestBody.create(MEDIA_TYPE, JSONObject.toJSONString(params));
         return execute(builder.url(url).post(requestBody).build());
     }
 
@@ -110,7 +110,7 @@ public class OkHttpUtil {
 
         Request.Builder builder = createBuilder(url);
         headers.forEach(builder::addHeader);
-        RequestBody requestBody = RequestBody.create(mediaType, JSONObject.toJSONString(params));
+        RequestBody requestBody = RequestBody.create(MEDIA_TYPE, JSONObject.toJSONString(params));
         return execute(builder.url(url).post(requestBody).build());
     }
 
@@ -124,7 +124,7 @@ public class OkHttpUtil {
 
         try {
             Request request = createBuilder(url).get().build();
-            Response response = client.newCall(request).execute();
+            Response response = CLIENT.newCall(request).execute();
             ResponseBody body = response.body();
             if (body != null) {
                 IOUtils.copy(body.byteStream(), outputStream);
@@ -138,7 +138,7 @@ public class OkHttpUtil {
     private static String execute(Request request) {
 
         try {
-            Response response = client.newCall(request).execute();
+            Response response = CLIENT.newCall(request).execute();
             if (!response.isSuccessful()) {
                 logger.error("request fail !! {}", response);
                 throw new ServiceException("请求失败 :" + response);
