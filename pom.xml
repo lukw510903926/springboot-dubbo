@@ -20,6 +20,7 @@
 		<HikariCP.version>2.4.13</HikariCP.version>
 		<fastjson.version>1.2.39</fastjson.version>
 		<dubbo.version>2.6.2</dubbo.version>
+		<spring.cloud.alibaba>0.2.0.RELEASE</spring.cloud.alibaba>
 		<spring.boot.dubbo.version>0.2.0</spring.boot.dubbo.version>
 	</properties>
 	<parent>
@@ -131,6 +132,12 @@
 				<groupId>com.squareup.okhttp3</groupId>
 				<artifactId>okhttp</artifactId>
 				<version>3.11.0</version>
+			</dependency>
+			<!--sentinel 流量监控-->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+				<version>${spring.cloud.alibaba}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

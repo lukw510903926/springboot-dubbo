@@ -59,5 +59,10 @@
             <groupId>com.boot.dubbo</groupId>
             <artifactId>dubbo-common</artifactId>
         </dependency>
+        <!--sentinel 流量监控-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
     </dependencies>
 </project>
