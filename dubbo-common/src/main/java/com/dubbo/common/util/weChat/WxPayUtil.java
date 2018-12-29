@@ -1,7 +1,6 @@
 package com.dubbo.common.util.weChat;
 
 import com.dubbo.common.util.exception.ServiceException;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,6 @@ import java.util.*;
 /**
  * 微信支付工具类
  */
-@Slf4j
 public class WxPayUtil {
 
     private static Logger logger = LoggerFactory.getLogger(WxPayUtil.class);
@@ -45,8 +43,7 @@ public class WxPayUtil {
      * @return
      */
     public static String getCurrentTimestamp() {
-        long l = System.currentTimeMillis() / 1000;
-        return String.valueOf(l);
+        return String.valueOf(System.currentTimeMillis() / 1000);
     }
 
     /**
@@ -104,7 +101,7 @@ public class WxPayUtil {
             byte[] array = md.digest(data.getBytes(CHART_SET));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
-                sb.append(Integer.toHexString((item & 0xFF) | 0x100).substring(1, 3));
+                sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
@@ -120,7 +117,6 @@ public class WxPayUtil {
      * @param data 待处理数据
      * @param key  密钥
      * @return 加密结果
-     * @throws Exception
      */
     public static String hmacSha256(String data, String key) {
 
@@ -131,7 +127,7 @@ public class WxPayUtil {
             byte[] array = sha256HMAC.doFinal(data.getBytes(CHART_SET));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
-                sb.append(Integer.toHexString((item & 0xFF) | 0x100).substring(1, 3));
+                sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
@@ -156,11 +152,7 @@ public class WxPayUtil {
             Element root = document.createElement("xml");
             document.appendChild(root);
             for (String key : data.keySet()) {
-                String value = data.get(key);
-                if (value == null) {
-                    value = "";
-                }
-                value = value.trim();
+                String value = Optional.ofNullable(data.get(key)).orElse("").trim();
                 Element filed = document.createElement(key);
                 filed.appendChild(document.createTextNode(value));
                 root.appendChild(filed);
@@ -236,6 +228,7 @@ public class WxPayUtil {
             while ((line = br.readLine()) != null) {
                 buffer.append(line);
             }
+            br.close();
             return buffer.toString();
         } catch (IOException e) {
             throw new ServiceException("请求失败 : {}", e);
@@ -249,6 +242,7 @@ public class WxPayUtil {
      * @return
      */
     public static String getIp(HttpServletRequest request) {
+
         String ip = request.getHeader("x-forwarded-for");
         if (StringUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
@@ -285,7 +279,7 @@ public class WxPayUtil {
         return mapToXml(map);
     }
 
-    public static List<String> sendRequestXml(String urlStr,String xmlStr){
+    public static List<String> sendRequestXml(String urlStr, String xmlStr) {
 
         List<String> result = new ArrayList<>();
         try {
@@ -301,12 +295,12 @@ public class WxPayUtil {
             out.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
-            while ((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 result.add(line);
             }
             br.close();
-        }catch(Exception ex) {
-            log.error("账单下载报错", ex);
+        } catch (Exception ex) {
+            logger.error("账单下载报错 {} ", ex);
         }
         return result;
     }
