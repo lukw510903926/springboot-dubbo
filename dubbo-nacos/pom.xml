@@ -25,12 +25,18 @@
                 <artifactId>dubbo-registry-nacos</artifactId>
                 <version>0.0.2</version>
             </dependency>
-            <!-- Alibaba Spring Context extension -->
+            <!-- Keep latest Nacos client version -->
             <dependency>
+                <groupId>com.alibaba.nacos</groupId>
+                <artifactId>nacos-client</artifactId>
+                <version>0.7.0</version>
+            </dependency>
+            <!-- Alibaba Spring Context extension -->
+            <!--<dependency>
                 <groupId>com.alibaba.spring</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>1.0.2</version>
-            </dependency>
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 </project>
