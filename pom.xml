@@ -6,7 +6,7 @@
 
 	<groupId>com.boot.dubbo</groupId>
 	<artifactId>boot-dubbo</artifactId>
-	<version>1.0.0</version>
+	<version>${project.version}</version>
 	<packaging>pom</packaging>
 
 	<name>boot-dubbo</name>
@@ -20,6 +20,7 @@
 		<HikariCP.version>2.4.13</HikariCP.version>
 		<fastjson.version>1.2.39</fastjson.version>
 		<dubbo.version>2.6.2</dubbo.version>
+		<project.version>1.0.0</project.version>
 		<spring.cloud.alibaba>0.2.0.RELEASE</spring.cloud.alibaba>
 		<spring.boot.dubbo.version>0.2.0</spring.boot.dubbo.version>
 	</properties>
@@ -33,7 +34,12 @@
 			<dependency>
 				<groupId>com.boot.dubbo</groupId>
 				<artifactId>dubbo-common</artifactId>
-				<version>1.0.0</version>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.boot.dubbo</groupId>
+				<artifactId>dubbo-api</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 			<!--alibaba begin-->
 			<dependency>
@@ -162,5 +168,6 @@
 		<module>dubbo-api</module>
 		<module>dubbo-common</module>
         <module>dubbo-wx</module>
-    </modules>
+		<module>dubbo-nacos</module>
+	</modules>
 </project>
