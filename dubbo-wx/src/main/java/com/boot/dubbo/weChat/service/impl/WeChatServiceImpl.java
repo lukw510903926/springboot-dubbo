@@ -129,7 +129,7 @@ public class WeChatServiceImpl implements WeChatService {
         //取订单号
         String orderNo = IdUtil.uuid();
         //通过goodsId取游戏价格
-        if (goods.getGamePrice() == 0) {
+        if (goods.getGamePrice() <= 0) {
             throw new ServiceException("商品价格未配置，请联系管理员");
         }
         //组装
