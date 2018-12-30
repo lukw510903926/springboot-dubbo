@@ -167,7 +167,6 @@ public class WeChatServiceImpl implements WeChatService {
             //生成订单记录
             Order khOrder = new Order();
             khOrder.setUserId(weChatUser.getUserId());
-            khOrder.setNickname(weChatUser.getNickName());
             khOrder.setOrderNo(orderNo);
             khOrder.setOriginPrice(goods.getOriginPrice());
             khOrder.setPrice(goods.getGamePrice());

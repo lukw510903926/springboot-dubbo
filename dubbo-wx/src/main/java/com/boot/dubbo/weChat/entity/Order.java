@@ -19,16 +19,20 @@ public class Order implements Serializable {
     private static final long serialVersionUID = -732731383522669887L;
 
     private Integer id;
+
     /**
      * 用户ID
      */
     private String userId;
-    private String nickname;
+
     /**
      * 订单号
      */
     private String orderNo;
 
+    /**
+     * 交易流水号
+     */
     private String transactionId;
 
     /**
@@ -40,18 +44,7 @@ public class Order implements Serializable {
      * 订单金额，单位分
      */
     private Integer price;
-    /**
-     * 渠道主ID
-     */
-    private String channelUserId;
-    /**
-     * 渠道ID
-     */
-    private String channelId;
-    /**
-     * 分销ID
-     */
-    private String distributionId;
+
     /**
      * 商品ID
      */
@@ -80,7 +73,5 @@ public class Order implements Serializable {
      * 是否已删除，0未删除 1已删除
      */
     private Integer isDeleted;
-
-    private Integer isOpen;
 
 }
