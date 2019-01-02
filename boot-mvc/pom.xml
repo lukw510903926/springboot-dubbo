@@ -42,7 +42,6 @@
         <dependency>
             <groupId>com.boot.dubbo</groupId>
             <artifactId>dubbo-api</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.boot.dubbo</groupId>
