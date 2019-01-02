@@ -11,6 +11,8 @@ package com.dubbo.common.util.exception;
  **/
 public class ServiceException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * 状态码
      */
