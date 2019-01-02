@@ -29,7 +29,7 @@ public class ResourceServiceImpl implements IResourceService {
             Resource resource = new Resource();
             resource.setId(localRandom.nextInt(100));
             resource.setCreated(LocalDateTime.now().minusDays(localRandom.nextInt(5)));
-            resource.setName(localRandom.doubles(System.currentTimeMillis()).toString());
+            resource.setName(localRandom.nextInt(1000000)+"");
             list.add(resource);
 
         }
