@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>
- *
+ * 从nacos 配置中心读取配置文件
  * @author yangqi
  * @Description </p>
  * @email yangqi@ywwl.com
