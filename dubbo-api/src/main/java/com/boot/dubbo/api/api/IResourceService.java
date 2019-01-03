@@ -15,4 +15,6 @@ import java.util.List;
 public interface IResourceService {
 
     List<Resource> list();
+
+    String weChatProperties();
 }
