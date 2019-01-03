@@ -31,12 +31,12 @@
                 <artifactId>nacos-client</artifactId>
                 <version>0.7.0</version>
             </dependency>
-            <!-- Alibaba Spring Context extension -->
-            <!--<dependency>
-                <groupId>com.alibaba.spring</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>1.0.2</version>
-            </dependency>-->
+            <!--配置中心-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>0.2.0.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
