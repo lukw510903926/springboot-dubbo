@@ -1,19 +1,21 @@
 <configuration scan="true" scanPeriod="60" debug="false">
 
 	<!-- 日志输出格式 -->
-	<property name="pattern" value="[%date{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level]%logger{96}[%line]-%msg%n" />   
+	<property name="pattern" value="[%date{yyyy-MM-dd HH:mm:ss.SSS}][%-5level]%logger{96}[%line]-%msg%n" />
 	<!-- 日志保存的最大时间 -->
 	<property name="maxHistory" value="30" /> 
 	<!-- 日志文件路径 -->  
 	<property name="logPath" value="./logs" /> 
 	<!-- <property name="logPath" value="./logs" />  -->
 	<!-- 日志文件名称 -->
-	<property name="appName" value="boot-mvc"></property>
+	<property name="appName" value="boot-mvc"/>
+
 	<!-- 控制台 -->
+	<property name="CONSOLE" value="%date{yyyy-MM-dd HH:mm:ss} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger) | %msg%n"/>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoder 默认配置为PatternLayoutEncoder -->
 		<encoder>
-			<pattern>${pattern}</pattern>
+			<pattern>${CONSOLE}</pattern>
 		</encoder>
 	</appender>
 	<!-- 输出日志到文件 -->
