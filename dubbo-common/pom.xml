@@ -33,6 +33,10 @@
 			<artifactId>aliyun-java-sdk-mts</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.alipay.sdk</groupId>
+			<artifactId>alipay-sdk-java</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 		</dependency>
