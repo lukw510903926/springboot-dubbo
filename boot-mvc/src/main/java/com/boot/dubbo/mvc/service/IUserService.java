@@ -15,4 +15,6 @@ import com.dubbo.common.web.RestResult;
 public interface IUserService extends IBaseService<User> {
 
     RestResult<User> saveUser(User user);
+
+    User findById(User user);
 }

@@ -23,4 +23,9 @@ public @interface CacheDelete {
 	 */
 	String key();
 
+	/**
+	 * 缓存key前缀
+	 * @return
+	 */
+	String prefix() default "";
 }

@@ -32,7 +32,6 @@ public class LoginFiler implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        logger.info("---------login filter----------");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         logger.info("{} : {}", AUTH_HEADER, request.getHeader(AUTH_HEADER));
         chain.doFilter(request, response);

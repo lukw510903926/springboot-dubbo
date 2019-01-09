@@ -22,14 +22,15 @@ public @interface Cacheable {
     String key() default "";
 
     /**
+     * 缓存key前缀
+     * @return
+     */
+    String prefix();
+
+    /**
      * 过期时间
      * @return
      */
     long expire() default 1800;
 
-    /**
-     * 返回结果类型
-     * @return
-     */
-    Class<?> resultType() default Object.class;
 }

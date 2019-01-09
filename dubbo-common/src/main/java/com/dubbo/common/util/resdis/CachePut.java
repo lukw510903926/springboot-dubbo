@@ -28,8 +28,8 @@ public @interface CachePut {
 	long expire() default 1800;
 
 	/**
-	 * 返回结果类型
+	 * 缓存key前缀
 	 * @return
 	 */
-	Class<?> resultType() default Object.class;
+	String prefix();
 }
