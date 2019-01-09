@@ -6,6 +6,7 @@ import com.boot.dubbo.api.entity.User;
 import com.boot.dubbo.api.mapper.UserMapper;
 import com.boot.dubbo.mvc.service.IProductService;
 import com.boot.dubbo.mvc.service.IUserService;
+import com.dubbo.common.util.resdis.Cacheable;
 import com.dubbo.common.web.RestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public boolean saveOrUpdate(User entity){
+    public boolean saveOrUpdate(User entity) {
 
         super.save(entity);
         this.productService.saveOrUpdate(new Product());
         return true;
+    }
+
+
+    @Override
+    @Cacheable(key = "#user.id", prefix = "user",cacheNames = "user_hash")
+    public User findById(User user) {
+        return this.baseMapper.selectById(user.getId());
     }
 }

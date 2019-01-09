@@ -1,7 +1,7 @@
 package com.boot.dubbo.mvc.config.filter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -13,10 +13,8 @@ import java.io.IOException;
  * @eamil 13507615840@163.com
  * @create 2018-10-11 21:04
  **/
-
+@Slf4j
 public class PermissionFilter implements Filter {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void init(FilterConfig filterConfig)  {
@@ -26,7 +24,6 @@ public class PermissionFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        logger.info("permission filter : " + this.getClass());
         chain.doFilter(request,response);
     }
 

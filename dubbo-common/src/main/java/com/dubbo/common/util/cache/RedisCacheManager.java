@@ -1,5 +1,6 @@
-package com.dubbo.common.util.aop;
+package com.dubbo.common.util.cache;
 
+import com.dubbo.common.util.aop.SpringExpressionUtils;
 import com.dubbo.common.util.resdis.CacheDelete;
 import com.dubbo.common.util.resdis.CachePut;
 import com.dubbo.common.util.resdis.Cacheable;
@@ -17,9 +18,9 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
-public class RedisCacheAop {
+public class RedisCacheManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisCacheAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedisCacheManager.class);
 
     private static final Class<Object> LOCK = Object.class;
 
@@ -31,7 +32,7 @@ public class RedisCacheAop {
 
         Method method = getMethod(joinPoint);
         Cacheable cache = method.getAnnotation(Cacheable.class);
-        String key = SpringExpressionUtils.parseValue(cache.key(), method, joinPoint.getArgs(), String.class);
+        String key = this.getKey(cache.key(), cache.prefix(), joinPoint);
         if (StringUtils.isBlank(key)) {
             return joinPoint.proceed();
         }
@@ -45,8 +46,8 @@ public class RedisCacheAop {
                 }
             }
         }
-        logger.info("cacheAble,name值：{},key值：{}", cacheName, key);
         this.setCache(cacheName, key, value, cache.expire());
+        logger.info("cacheName值：{},key值：{}", cacheName, key);
         return value;
     }
 
@@ -56,7 +57,7 @@ public class RedisCacheAop {
         Object value = joinPoint.proceed();
         Method method = getMethod(joinPoint);
         CachePut cache = method.getAnnotation(CachePut.class);
-        String key = SpringExpressionUtils.parseValue(cache.key(), method, joinPoint.getArgs(), String.class);
+        String key = this.getKey(cache.key(), cache.prefix(), joinPoint);
         this.setCache(cache.cacheNames(), key, value, cache.expire());
         return value;
     }
@@ -67,7 +68,7 @@ public class RedisCacheAop {
         Object value = joinPoint.proceed();
         Method method = getMethod(joinPoint);
         CacheDelete cache = method.getAnnotation(CacheDelete.class);
-        String keyValue = SpringExpressionUtils.parseValue(cache.key(), method, joinPoint.getArgs(), String.class);
+        String keyValue = this.getKey(cache.key(), cache.prefix(), joinPoint);
         if (StringUtils.isBlank(keyValue)) {
             return value;
         }
@@ -83,13 +84,13 @@ public class RedisCacheAop {
 
     private void setCache(String cacheName, String key, Object value, long expire) {
 
-        if (value == null || StringUtils.isBlank(key)) {
+        if (value == null) {
             return;
         }
         if (StringUtils.isNotBlank(cacheName)) {
             redisTemplate.opsForHash().put(cacheName, key, value);
         } else {
-            redisTemplate.opsForValue().set(key, value, expire, TimeUnit.MICROSECONDS);
+            redisTemplate.opsForValue().set(key, value, expire, TimeUnit.SECONDS);
         }
     }
 
@@ -99,6 +100,16 @@ public class RedisCacheAop {
             return redisTemplate.opsForHash().get(cacheName, key);
         }
         return redisTemplate.opsForValue().get(key);
+    }
+
+    private String getKey(String key, String prefix, ProceedingJoinPoint joinPoint) {
+
+        Method method = this.getMethod(joinPoint);
+        String tempKey = SpringExpressionUtils.parseValue(key, method, joinPoint.getArgs(), String.class);
+        if (StringUtils.isBlank(tempKey)) {
+            return null;
+        }
+        return prefix + ':' + tempKey;
     }
 
     private Method getMethod(ProceedingJoinPoint joinPoint) {

@@ -79,6 +79,14 @@ public class UserController {
         return RestResult.success(this.userService.getById(userId));
     }
 
+    @GetMapping("/cache/{userId}")
+    public RestResult<User> findById(@PathVariable Long userId){
+
+        User user = new User();
+        user.setId(userId);
+        return RestResult.success(this.userService.findById(user));
+    }
+
     @PostMapping("/page/list")
     public RestResult<IPage<User>> query(@RequestBody User user) {
         logger.info("user: {}", user);
