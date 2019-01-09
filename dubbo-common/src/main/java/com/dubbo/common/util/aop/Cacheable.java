@@ -1,4 +1,4 @@
-package com.dubbo.common.util.resdis;
+package com.dubbo.common.util.aop;
 
 
 import java.lang.annotation.*;
@@ -19,7 +19,7 @@ public @interface Cacheable {
      * key
      * @return
      */
-    String key() default "";
+    String key();
 
     /**
      * 缓存key前缀

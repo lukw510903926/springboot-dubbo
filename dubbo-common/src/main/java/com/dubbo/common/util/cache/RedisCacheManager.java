@@ -1,9 +1,9 @@
 package com.dubbo.common.util.cache;
 
+import com.dubbo.common.util.aop.CacheDelete;
+import com.dubbo.common.util.aop.CachePut;
+import com.dubbo.common.util.aop.Cacheable;
 import com.dubbo.common.util.aop.SpringExpressionUtils;
-import com.dubbo.common.util.resdis.CacheDelete;
-import com.dubbo.common.util.resdis.CachePut;
-import com.dubbo.common.util.resdis.Cacheable;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -27,7 +27,7 @@ public class RedisCacheManager {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Around("@annotation(com.dubbo.common.util.resdis.Cacheable)")
+    @Around("@annotation(com.dubbo.common.util.aop.Cacheable)")
     public Object cacheGet(final ProceedingJoinPoint joinPoint) throws Throwable {
 
         Method method = getMethod(joinPoint);
@@ -51,7 +51,7 @@ public class RedisCacheManager {
         return value;
     }
 
-    @Around("@annotation(com.dubbo.common.util.resdis.CachePut)")
+    @Around("@annotation(com.dubbo.common.util.aop.CachePut)")
     public Object cachePut(final ProceedingJoinPoint joinPoint) throws Throwable {
 
         Object value = joinPoint.proceed();
@@ -62,7 +62,7 @@ public class RedisCacheManager {
         return value;
     }
 
-    @Around("@annotation(com.dubbo.common.util.resdis.CacheDelete)")
+    @Around("@annotation(com.dubbo.common.util.aop.CacheDelete)")
     public Object cacheDelete(final ProceedingJoinPoint joinPoint) throws Throwable {
 
         Object value = joinPoint.proceed();

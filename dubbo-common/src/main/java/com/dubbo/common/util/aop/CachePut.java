@@ -1,4 +1,4 @@
-package com.dubbo.common.util.resdis;
+package com.dubbo.common.util.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,25 +7,29 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CacheDelete {
+public @interface CachePut {
 
 	/**
-	 * hash 缓存时的缓存名称
-	 * 
+	 * 缓存类型为hash时的 缓存名称
 	 * @return
 	 */
-	String cacheName();
+	String cacheNames() default "";
 
 	/**
-	 * 缓存key
-	 * 
+	 * key
 	 * @return
 	 */
 	String key();
 
 	/**
+	 * 过期时间
+	 * @return
+	 */
+	long expire() default 1800;
+
+	/**
 	 * 缓存key前缀
 	 * @return
 	 */
-	String prefix() default "";
+	String prefix();
 }
