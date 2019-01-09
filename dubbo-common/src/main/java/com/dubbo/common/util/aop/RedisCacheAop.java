@@ -21,6 +21,8 @@ public class RedisCacheAop {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisCacheAop.class);
 
+    private static final Class<Object> LOCK = Object.class;
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -33,18 +35,17 @@ public class RedisCacheAop {
         if (StringUtils.isBlank(key)) {
             return joinPoint.proceed();
         }
-
-        Object value;
         String cacheName = cache.cacheNames();
-        if (StringUtils.isNotBlank(cacheName)) {
-            value = redisTemplate.opsForHash().get(cacheName, key);
-        } else {
-            value = redisTemplate.opsForValue().get(key);
+        Object value = this.getCache(cacheName, key);
+        if (value == null) {
+            synchronized (LOCK) {
+                value = this.getCache(cacheName, key);
+                if (value == null) {
+                    value = joinPoint.proceed();
+                }
+            }
         }
         logger.info("cacheAble,name值：{},key值：{}", cacheName, key);
-        if (value == null) {
-            value = joinPoint.proceed();
-        }
         this.setCache(cacheName, key, value, cache.expire());
         return value;
     }
@@ -90,6 +91,14 @@ public class RedisCacheAop {
         } else {
             redisTemplate.opsForValue().set(key, value, expire, TimeUnit.MICROSECONDS);
         }
+    }
+
+    private Object getCache(String cacheName, String key) {
+
+        if (StringUtils.isNotBlank(cacheName)) {
+            return redisTemplate.opsForHash().get(cacheName, key);
+        }
+        return redisTemplate.opsForValue().get(key);
     }
 
     private Method getMethod(ProceedingJoinPoint joinPoint) {
