@@ -1,6 +1,7 @@
 package com.boot.dubbo.mvc.config.cache;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -23,7 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @eamil 13507615840@163.com
  * @create 2018-11-04 19:58
  **/
-//@EnableCaching
+@EnableCaching
 @Configuration
 public class CacheConfig {
 
