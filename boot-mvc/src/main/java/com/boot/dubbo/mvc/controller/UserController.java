@@ -48,15 +48,11 @@ public class UserController {
     @RequestMapping("/saveOrUpdate")
     public RestResult<User> saveOrUpdate() {
 
-        try {
-            User user = new User();
-            user.setName("user_product_name");
-            user.setTestDate(new Date());
-            this.userService.saveOrUpdate(user);
-            return RestResult.success(user);
-        } catch (Exception e) {
-            return RestResult.fail(null, e.getLocalizedMessage());
-        }
+        User user = new User();
+        user.setName("user_product_name");
+        user.setTestDate(new Date());
+        this.userService.saveOrUpdate(user);
+        return RestResult.success(user);
     }
 
 
@@ -80,7 +76,7 @@ public class UserController {
     }
 
     @GetMapping("/cache/{userId}")
-    public RestResult<User> findById(@PathVariable Long userId){
+    public RestResult<User> findById(@PathVariable Long userId) {
 
         User user = new User();
         user.setId(userId);
