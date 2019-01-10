@@ -26,7 +26,7 @@ MODEL_VARS=""
 MODEL_DAEMON=0
 
 # 日志 '&-':表示关闭标准输出日志
-MODEL_LOG="../logs/error.log"
+MODEL_LOG="./error.log"
 
 
 #-------------------------------------------------------------------
