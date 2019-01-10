@@ -57,7 +57,7 @@ public class RequiredParameterValidator {
         if (CollectionUtils.isEmpty(list)) {
             return Result.result(null);
         }
-        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         List<Field> fields = ReflectionUtils.getFields(object);
         Map<String, Field> fieldMap = new HashMap<>();
         if (CollectionUtils.isNotEmpty(fields)) {
@@ -68,12 +68,12 @@ public class RequiredParameterValidator {
                     if (value == null || StringUtils.isEmpty(value.toString())) {
                         NotNull notNull = fieldMap.get(key).getAnnotation(NotNull.class);
                         String property = notNull == null || StringUtils.isBlank(notNull.value()) ? key : notNull.value();
-                        stringBuffer.append(property).append(" 不可为空 ! ");
+                        builder.append(property).append(" 不可为空 ! ");
                     }
                 }
             });
         }
-        return Result.result(stringBuffer.toString());
+        return Result.result(builder.toString());
     }
 
     public static class Result {
