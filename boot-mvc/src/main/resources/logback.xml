@@ -21,21 +21,20 @@
     </appender>
     <!-- 输出日志到文件 -->
     <appender name="rollingAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${logPath}/${appName}.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${appName}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>${maxHistory}</maxHistory>
-        </rollingPolicy>
-        <encoder><!-- 必须指定，否则不会往文件输出内容 -->
-            <pattern>${pattern}</pattern>
-        </encoder>
         <append>false</append>
         <prudent>false</prudent>
-        <!-- <filter class="ch.qos.logback.classic.filter.LevelFilter">INFO级别的日志
-            <level>INFO</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter> -->
+        <file>${logPath}/${appName}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logPath}/${appName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+            <maxFileSize>4GB</maxFileSize>
+            <totalSizeCap>12GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${pattern}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
     </appender>
     <!-- 错误日志 -->
     <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
