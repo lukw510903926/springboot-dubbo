@@ -1,13 +1,8 @@
 package com.boot.dubbo.mvc.config;
 
-import com.dubbo.common.util.resdis.CacheService;
-import com.dubbo.common.util.resdis.RedisCacheImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * <p>
@@ -20,26 +15,14 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class ApplicationConfig {
 
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory ;
-
+    /**
+     * 分页拦截器
+     *
+     * @return
+     */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
-        return redisTemplate;
+    public PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
     }
 
-    @Bean
-    public CacheService cacheService() {
-
-        RedisCacheImpl redisCache = new RedisCacheImpl();
-        redisCache.setRedisTemplate(redisTemplate());
-        return redisCache;
-    }
 }

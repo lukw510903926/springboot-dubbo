@@ -1,5 +1,7 @@
 package com.boot.dubbo.mvc.config.cache;
 
+import com.dubbo.common.util.resdis.CacheService;
+import com.dubbo.common.util.resdis.RedisCacheImpl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -63,6 +65,14 @@ public class CacheConfig {
                 //缓存过期
                 .entryTtl(Duration.ofMinutes(30));
         return new RedisCacheManager(redisCacheWriter, configuration);
+    }
+
+    @Bean
+    public CacheService cacheService() {
+
+        RedisCacheImpl redisCache = new RedisCacheImpl();
+        redisCache.setRedisTemplate(redisTemplate());
+        return redisCache;
     }
 
 //    /**
