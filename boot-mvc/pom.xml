@@ -36,10 +36,6 @@
             <artifactId>nekohtml</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.boot.dubbo</groupId>
             <artifactId>dubbo-api</artifactId>
         </dependency>
@@ -69,6 +65,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <!--spring-boot-redin end -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

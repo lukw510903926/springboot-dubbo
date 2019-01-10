@@ -3,27 +3,27 @@
 #-------------------------------------------------------------------
 # 定义变量
 #-------------------------------------------------------------------
-JAVA_HOME='which java'
+JAVA_HOME=which java
 echo ${JAVA_HOME}
 
 # 模块名
-MODEL_NAME=ESFLOW_MODELCONFIG_SERVICE
+MODEL_NAME=SPRING_BOOT_DUBBO
 
 # 模块运行需要的lib
 MODEL_LIBS=`ls ../lib/*.jar | paste -s -d":" -`
-echo ${MODEL_LIBS}
+#echo ${MODEL_LIBS}
 
 # 选项  -Dlogback.configurationFile=../logback.xml
-MODEL_OPTS="-Duser.timezone=GMT+8 -Dspring.config.location=../application.properties"
+MODEL_OPTS="-Duser.timezone=GMT+8 -Dspring.config.location=../conf/application.properties,../conf/application.yml"
 
 # 运行类名
-MODEL_CLASS="com.eastcom.security.Vault4a.launcher.Application"
+MODEL_CLASS="com.boot.dubbo.mvc.DubboMVCApplication"
 
 # 运行参数
 MODEL_VARS=""
 
 # 前台/后台: 0-前台， 1-后台
-MODEL_DAEMON=1
+MODEL_DAEMON=0
 
 # 日志 '&-':表示关闭标准输出日志
 MODEL_LOG="../logs/error.log"
