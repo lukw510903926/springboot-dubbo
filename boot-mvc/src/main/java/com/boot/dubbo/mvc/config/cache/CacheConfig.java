@@ -52,11 +52,11 @@ public class CacheConfig {
     }
 
     @Bean
-    public RedisCacheManager redisCacheManager(RedisTemplate<String, Object> redisTemplate) {
+    public RedisCacheManager redisCacheManager() {
 
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate.getValueSerializer()));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisTemplate().getValueSerializer()));
         return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
     }
 
