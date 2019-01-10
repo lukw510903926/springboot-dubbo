@@ -54,10 +54,12 @@ public class RedisCacheManager {
     @Around("@annotation(com.dubbo.common.util.aop.CachePut)")
     public Object cachePut(final ProceedingJoinPoint joinPoint) throws Throwable {
 
-        Object value = joinPoint.proceed();
         Method method = getMethod(joinPoint);
         CachePut cache = method.getAnnotation(CachePut.class);
         String key = this.getKey(cache.key(), cache.prefix(), joinPoint);
+        this.deleteCache(cache.cacheNames(), key);
+        Object value = joinPoint.proceed();
+        this.deleteCache(cache.cacheNames(), key);
         this.setCache(cache.cacheNames(), key, value, cache.expire());
         return value;
     }
@@ -72,16 +74,34 @@ public class RedisCacheManager {
         if (StringUtils.isBlank(keyValue)) {
             return value;
         }
-        String cacheName = cache.cacheName();
-        if (StringUtils.isNotBlank(cacheName)) {
-            redisTemplate.opsForHash().delete(cacheName, keyValue);
-        } else {
-            redisTemplate.delete(keyValue);
-        }
-        logger.info("cacheDelete执行,name值：{},key值：{}", cacheName, keyValue);
+        this.deleteCache(cache.cacheName(), keyValue);
+        logger.info("cacheDelete执行,name值：{},key值：{}", cache.cacheName(), keyValue);
         return value;
     }
 
+    /**
+     * 缓存删除
+     *
+     * @param cacheName
+     * @param key
+     */
+    private void deleteCache(String cacheName, String key) {
+
+        if (StringUtils.isNotBlank(cacheName)) {
+            redisTemplate.opsForHash().delete(cacheName, key);
+        } else {
+            redisTemplate.delete(key);
+        }
+    }
+
+    /**
+     * 设置缓存
+     *
+     * @param cacheName
+     * @param key
+     * @param value
+     * @param expire
+     */
     private void setCache(String cacheName, String key, Object value, long expire) {
 
         if (value == null) {
@@ -94,6 +114,13 @@ public class RedisCacheManager {
         }
     }
 
+    /**
+     * 获取缓存
+     *
+     * @param cacheName
+     * @param key
+     * @return
+     */
     private Object getCache(String cacheName, String key) {
 
         if (StringUtils.isNotBlank(cacheName)) {
@@ -102,6 +129,14 @@ public class RedisCacheManager {
         return redisTemplate.opsForValue().get(key);
     }
 
+    /**
+     * 获取key
+     *
+     * @param key
+     * @param prefix
+     * @param joinPoint
+     * @return
+     */
     private String getKey(String key, String prefix, ProceedingJoinPoint joinPoint) {
 
         Method method = this.getMethod(joinPoint);
