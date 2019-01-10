@@ -67,7 +67,7 @@ public class RequiredParameterValidator {
                     Object value = ReflectionUtils.getFieldValue(object, key);
                     if (value == null || StringUtils.isEmpty(value.toString())) {
                         NotNull notNull = fieldMap.get(key).getAnnotation(NotNull.class);
-                        String property = notNull == null ? key : notNull.value();
+                        String property = notNull == null || StringUtils.isBlank(notNull.value()) ? key : notNull.value();
                         stringBuffer.append(property).append(" 不可为空 ! ");
                     }
                 }
