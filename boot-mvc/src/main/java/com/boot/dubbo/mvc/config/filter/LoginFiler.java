@@ -1,7 +1,6 @@
 package com.boot.dubbo.mvc.config.filter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 
 import javax.servlet.*;
@@ -16,11 +15,10 @@ import java.io.IOException;
  * @eamil 13507615840@163.com
  * @create 2018-10-11 20:47
  **/
+@Slf4j
 @Order(1)
 @WebFilter(filterName = "loginFilter", urlPatterns = "/*")
 public class LoginFiler implements Filter {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final String AUTH_HEADER = "boot_dubbo_auth_header";
 
@@ -33,7 +31,7 @@ public class LoginFiler implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        logger.info("{} : {}", AUTH_HEADER, request.getHeader(AUTH_HEADER));
+        log.info("{} : {}", AUTH_HEADER, request.getHeader(AUTH_HEADER));
         chain.doFilter(request, response);
     }
 

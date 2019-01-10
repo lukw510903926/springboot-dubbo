@@ -63,10 +63,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<PermissionFilter> permissionFilter() {
 
-        FilterRegistrationBean<PermissionFilter> registration = new FilterRegistrationBean<PermissionFilter>();
+        FilterRegistrationBean<PermissionFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new PermissionFilter());
         registration.addUrlPatterns("/*");//设置过滤路径，/*所有路径
-        registration.addInitParameter("name", "alue");//添加默认参数
+        registration.addInitParameter("name", "value");//添加默认参数
         registration.setName("permissionFilter");
         registration.setOrder(2);//设置优先级
         return registration;

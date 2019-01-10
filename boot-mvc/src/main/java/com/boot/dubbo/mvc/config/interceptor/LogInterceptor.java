@@ -1,7 +1,6 @@
 package com.boot.dubbo.mvc.config.interceptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,15 +12,13 @@ import javax.servlet.http.HttpServletResponse;
  * @eamil 13507615840@163.com
  * @create 2018-10-11 21:02
  **/
-
+@Slf4j
 public class LogInterceptor implements HandlerInterceptor {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        logger.info("Interceptor : {}" , this.getClass());
+        log.info("Interceptor : {}" , this.getClass());
         return true;
     }
 }
