@@ -6,7 +6,7 @@
 
 	<groupId>com.boot.dubbo</groupId>
 	<artifactId>boot-dubbo</artifactId>
-	<version>${project.version}</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>boot-dubbo</name>

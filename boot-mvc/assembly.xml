@@ -36,13 +36,13 @@
 				<include>*.properties</include>
 			</includes>
 		</fileSet>
-		<fileSet>
+		<!--<fileSet>
 			<outputDirectory>logs</outputDirectory>
 			<excludes>
 				<exclude>**/*</exclude>
 			</excludes>
 			<fileMode>0644</fileMode>
-		</fileSet>
+		</fileSet>-->
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
