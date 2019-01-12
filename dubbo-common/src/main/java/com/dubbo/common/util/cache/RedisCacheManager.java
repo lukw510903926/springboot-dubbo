@@ -59,7 +59,6 @@ public class RedisCacheManager {
         String key = this.getKey(cache.key(), cache.prefix(), joinPoint);
         this.deleteCache(cache.cacheNames(), key);
         Object value = joinPoint.proceed();
-        this.deleteCache(cache.cacheNames(), key);
         this.setCache(cache.cacheNames(), key, value, cache.expire());
         return value;
     }
@@ -67,10 +66,11 @@ public class RedisCacheManager {
     @Around("@annotation(com.dubbo.common.util.aop.CacheDelete)")
     public Object cacheDelete(final ProceedingJoinPoint joinPoint) throws Throwable {
 
-        Object value = joinPoint.proceed();
         Method method = getMethod(joinPoint);
         CacheDelete cache = method.getAnnotation(CacheDelete.class);
         String keyValue = this.getKey(cache.key(), cache.prefix(), joinPoint);
+        this.deleteCache(cache.cacheName(),keyValue);
+        Object value = joinPoint.proceed();
         if (StringUtils.isBlank(keyValue)) {
             return value;
         }
