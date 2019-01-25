@@ -1,69 +1,65 @@
 package com.dubbo.common.util;
 
-import java.io.UnsupportedEncodingException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * 类的说明：MD5加密工具类
  **/
+@Slf4j
 public class MD5Util {
-	
-	public static String Md5(String convertStr){
-		MessageDigest digest;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-		}
-		catch (NoSuchAlgorithmException e) {
-			throw new IllegalStateException("MD5 algorithm not available.  Fatal (should be in the JDK).");
-		}
 
-		try {
-			byte[] bytes = digest.digest(convertStr.toString().getBytes("UTF-8"));
-			return String.format("%032x", new BigInteger(1, bytes));
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new IllegalStateException("UTF-8 encoding not available.  Fatal (should be in the JDK).");
-		}
-	}
 
-	public static String MD5Encode(String origin, String charsetname) {
-		String resultString = null;
-		try {
-			resultString = new String(origin);
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			if (charsetname == null || "".equals(charsetname))
-				resultString = byteArrayToHexString(md.digest(resultString
-						.getBytes()));
-			else
-				resultString = byteArrayToHexString(md.digest(resultString
-						.getBytes(charsetname)));
-		} catch (Exception exception) {
-		}
-		return resultString;
-	}
+    private static final String[] HEX_DIGITS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
-	private static String byteArrayToHexString(byte b[]) {
-		StringBuffer resultSb = new StringBuffer();
-		for (int i = 0; i < b.length; i++)
-			resultSb.append(byteToHexString(b[i]));
+    public static String Md5(String convertStr) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("MD5 algorithm not available.  Fatal (should be in the JDK).");
+        }
 
-		return resultSb.toString();
-	}
+        byte[] bytes = digest.digest(convertStr.getBytes(StandardCharsets.UTF_8));
+        return String.format("%032x", new BigInteger(1, bytes));
+    }
 
-	private static String byteToHexString(byte b) {
-		int n = b;
-		if (n < 0)
-			n += 256;
-		int d1 = n / 16;
-		int d2 = n % 16;
-		return hexDigits[d1] + hexDigits[d2];
-	}
+    public static String MD5Encode(String origin, String charSet) {
 
-	private static final String hexDigits[] = { "0", "1", "2", "3", "4", "5",
-			"6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
-	public static void main(String[] args) {
-		System.out.println(Md5("123456"));
-	}
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            if (StringUtils.isEmpty(charSet)) {
+                origin = byteArrayToHexString(md.digest(origin.getBytes()));
+            } else {
+                origin = byteArrayToHexString(md.digest(origin.getBytes(charSet)));
+            }
+        } catch (Exception exception) {
+            log.error("加密失败 : {}", exception);
+        }
+        return origin;
+    }
+
+    private static String byteArrayToHexString(byte[] bytes) {
+
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(byteToHexString(b));
+        }
+        return builder.toString();
+    }
+
+    private static String byteToHexString(byte b) {
+
+        int n = b;
+        if (n < 0) {
+            n += 256;
+        }
+        int d1 = n / 16;
+        int d2 = n % 16;
+        return HEX_DIGITS[d1] + HEX_DIGITS[d2];
+    }
 }

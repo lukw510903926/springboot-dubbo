@@ -19,16 +19,15 @@ public class SHA256Util {
     /**
      * 利用java原生的摘要实现SHA256加密
      *
-     * @param str 加密后的报文
+     * @param msg 加密后的报文
      * @return
      */
-    public static String getSHA256StrJava(String str) {
+    public static String SHA256(String msg) {
 
-        MessageDigest messageDigest;
         String encodeStr = "";
         try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(str.getBytes(StandardCharsets.UTF_8));
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            messageDigest.update(msg.getBytes(StandardCharsets.UTF_8));
             encodeStr = byte2Hex(messageDigest.digest());
         } catch (NoSuchAlgorithmException e) {
             log.error("sha256加密失败 : {}", e);
@@ -45,11 +44,10 @@ public class SHA256Util {
     private static String byte2Hex(byte[] bytes) {
 
         StringBuilder builder = new StringBuilder();
-        String temp = null;
+        String temp;
         for (int i = 0; i < bytes.length; i++) {
             temp = Integer.toHexString(bytes[i] & 0xFF);
             if (temp.length() == 1) {
-                //1得到一位的进行补0操作
                 builder.append("0");
             }
             builder.append(temp);
