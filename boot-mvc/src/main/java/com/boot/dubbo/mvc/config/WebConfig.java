@@ -1,5 +1,6 @@
 package com.boot.dubbo.mvc.config;
 
+import com.boot.dubbo.api.entity.Product;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,6 +54,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST","PUT","DELETE")
                 .allowCredentials(true).maxAge(3600);
+    }
+
+
+    @Bean
+    public Product product(){
+
+        return new Product();
     }
 
     /**

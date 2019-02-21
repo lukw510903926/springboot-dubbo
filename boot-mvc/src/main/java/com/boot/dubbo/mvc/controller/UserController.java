@@ -3,16 +3,20 @@ package com.boot.dubbo.mvc.controller;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.boot.dubbo.api.entity.Product;
 import com.boot.dubbo.mvc.service.IUserService;
+import com.dubbo.common.util.SpringApplicationContext;
 import com.dubbo.common.web.RestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.boot.dubbo.api.entity.User;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @RestController
 @RequestMapping("/user")
@@ -89,5 +93,10 @@ public class UserController {
         Page<User> page = new Page<>(1, 10);
         page.setDesc("test_id");
         return RestResult.success(this.userService.page(page, user));
+    }
+
+    @GetMapping("/product")
+    public String product(){
+        return JSONObject.toJSONString(SpringApplicationContext.getBean(Product.class));
     }
 }
