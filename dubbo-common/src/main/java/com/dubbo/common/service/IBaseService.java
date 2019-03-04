@@ -48,9 +48,14 @@ public interface IBaseService<T> extends IService<T> {
         return list(new QueryWrapper<>(t));
     }
 
-    default T getOne(T t) {
+    default T selectOne(T t) {
 
         return getOne(new QueryWrapper<>(t), true);
+    }
+
+    default boolean delete(T t) {
+
+        return remove(new QueryWrapper<>(t));
     }
 
     default IPage<T> page(Page<T> page, T t) {
