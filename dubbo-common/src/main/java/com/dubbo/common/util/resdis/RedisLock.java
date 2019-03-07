@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @email yagnqi@ywwl.com
  * @since 2018/10/12 17:56
  **/
-public class DistributedRedisLock {
+public class RedisLock {
 
     private static final String LOCK_TITLE = "redisLock_";
 
@@ -25,7 +25,7 @@ public class DistributedRedisLock {
      * @param timeOut
      * @return
      */
-    public static boolean acquire(Redisson redisson, String lockName, int timeOut) {
+    public static boolean getLock(Redisson redisson, String lockName, int timeOut) {
 
         try {
             String key = LOCK_TITLE + lockName;
@@ -45,7 +45,7 @@ public class DistributedRedisLock {
      * @param redisson
      * @param lockName
      */
-    public static void release(Redisson redisson, String lockName) {
+    public static void deleteLock(Redisson redisson, String lockName) {
 
         String key = LOCK_TITLE + lockName;
         RLock rLock = redisson.getLock(key);
