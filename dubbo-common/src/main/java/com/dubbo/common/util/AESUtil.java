@@ -9,6 +9,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -76,7 +77,7 @@ public class AESUtil {
             GCMParameterSpec params = new GCMParameterSpec(128, msg, 0, 12);
             cipher.init(Cipher.DECRYPT_MODE, key, params);
             byte[] decryptData = cipher.doFinal(msg, 12, msg.length - 12);
-            return new String(decryptData, "utf-8");
+            return new String(decryptData, StandardCharsets.UTF_8);
         } catch (Exception ex) {
             logger.error("解密失败 : {}", ex);
         }
