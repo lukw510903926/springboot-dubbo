@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @version V1.0
- * @Description: TODO(用一句话描述该文件做什么)
+ * @Description: redis操作
  * @author: yagnqi
  * @email : yangqi@ywwl.com
  * @date: 2018年10月11日 下午1:30:43
