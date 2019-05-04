@@ -19,7 +19,7 @@ public class RedisCacheImpl implements CacheService {
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    private static final long ZERO = 0l;
+    private static final long ZERO = 0L;
 
     private static final boolean FALSE = false;
 
