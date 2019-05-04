@@ -1,5 +1,6 @@
 package com.dubbo.common.util.resdis;
 
+import com.dubbo.common.util.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -47,19 +48,13 @@ public class RedisCacheImpl implements CacheService {
     @Override
     public void del(@NotNull String... key) {
 
-        if (key != null && key.length > 0) {
-            if (key.length == 1) {
-                redisTemplate.delete(key[0]);
-            } else {
-                redisTemplate.delete(Arrays.asList(key));
-            }
-        }
+        redisTemplate.delete(Arrays.asList(key));
     }
 
     // ============================String=============================
     @Override
     public Object get(@NotNull String key) {
-        return key == null ? null : redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue().get(key);
     }
 
     @Override
@@ -80,7 +75,7 @@ public class RedisCacheImpl implements CacheService {
     @Override
     public long increment(@NotNull String key, long delta) {
         if (delta < 0) {
-            throw new RuntimeException("递增因子必须大于0");
+            throw new ServiceException("递增因子必须大于0");
         }
         return Optional.ofNullable(redisTemplate.opsForValue().increment(key, delta)).orElse(ZERO);
     }
@@ -88,7 +83,7 @@ public class RedisCacheImpl implements CacheService {
     @Override
     public long decrement(@NotNull String key, long delta) {
         if (delta < 0) {
-            throw new RuntimeException("递减因子必须大于0");
+            throw new ServiceException("递减因子必须大于0");
         }
         return Optional.ofNullable(redisTemplate.opsForValue().increment(key, -delta)).orElse(ZERO);
     }
