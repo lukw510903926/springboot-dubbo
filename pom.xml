@@ -179,5 +179,6 @@
 		<module>dubbo-common</module>
         <module>dubbo-wx</module>
 		<module>dubbo-nacos</module>
-	</modules>
+        <module>boot-json</module>
+    </modules>
 </project>

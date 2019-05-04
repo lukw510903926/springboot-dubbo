@@ -1,6 +1,8 @@
 package com.dubbo.common.util.aop;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
@@ -18,7 +20,7 @@ public class SpringExpressionUtils {
 
 		StandardEvaluationContext context = new StandardEvaluationContext();
 		Expression expression = getExpression(key, method, args, context);
-		return expression != null ? expression.getValue(context, resultType) : null;
+		return Optional.ofNullable(expression).map(entity ->entity.getValue(context,resultType)).orElse(null);
 	}
 
 	private static Expression getExpression(String key, Method method, Object[] args, EvaluationContext context) {
