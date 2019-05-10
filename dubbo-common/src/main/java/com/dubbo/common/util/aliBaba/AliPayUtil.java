@@ -10,7 +10,6 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayDataDataserviceBillDownloadurlQueryResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import lombok.Data;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +49,6 @@ public class AliPayUtil {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
 
-    public static String APP_ID;
-
-    public static String MCH_ID;
-
     public static final Charset ALI_PAY_BILL_CHARSET = Charset.forName("GBK");
 
     //以下配置写单元测试用的
@@ -67,8 +62,6 @@ public class AliPayUtil {
     @PostConstruct
     public void initClient() {
         alipayClient = new DefaultAlipayClient(apiUrl, appId, privateKey, "json", DEFAULT_CHARSET, publicKey, "RSA2");
-        APP_ID = appId;
-        MCH_ID = mchId;
     }
 
     /**
@@ -79,46 +72,51 @@ public class AliPayUtil {
      */
     public static List<String> billDownload(Map<String, String> content) {
 
+        List<String> resultList = new ArrayList<>();
+
+        String url;
         try {
             AlipayDataDataserviceBillDownloadurlQueryRequest request = new AlipayDataDataserviceBillDownloadurlQueryRequest();
             request.setBizContent(JSONObject.toJSONString(content));
             AlipayDataDataserviceBillDownloadurlQueryResponse response = alipayClient.execute(request);
-            if (response.isSuccess()) {
-                logger.info("AliPayUtil billDownload invoke success");
-                String url = response.getBillDownloadUrl();
-                if (StringUtils.isBlank(url)) {
-                    return null;
-                }
-                ZipInputStream in = new ZipInputStream(new URL(url).openStream(), ALI_PAY_BILL_CHARSET);
-                BufferedReader br = new BufferedReader(new InputStreamReader(in, ALI_PAY_BILL_CHARSET));
-                List<String> resultList = new ArrayList<>();
-                ZipEntry zipFile;
-                //循环读取zip中的cvs文件，无法使用jdk自带，因为文件名中有中文
-                while ((zipFile = in.getNextEntry()) != null) {
-                    if (zipFile.isDirectory()) {
-                        continue;
-                    }
-                    //获得cvs名字
-                    String fileName = zipFile.getName();
-                    logger.info("alipay cvs-----" + fileName);
-                    //检测文件是否存在
-                    if (fileName != null && fileName.indexOf('.') != -1 && !fileName.contains("汇总")) {
-                        String line;
-                        while ((line = br.readLine()) != null) {
-                            resultList.add(line);
-                        }
-                    }
-                }
-                IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(br);
-                return resultList;
-            } else {
+            if (!response.isSuccess()) {
                 logger.error("AliPayUtil billDownload invoke error");
+                return resultList;
             }
+            url = response.getBillDownloadUrl();
+        } catch (AlipayApiException e) {
+            logger.error("AliPayUtil billDownload invoke error");
+            return resultList;
+        }
+
+        try (ZipInputStream in = new ZipInputStream(new URL(url).openStream(), ALI_PAY_BILL_CHARSET);
+             BufferedReader br = new BufferedReader(new InputStreamReader(in, ALI_PAY_BILL_CHARSET))) {
+            logger.info("AliPayUtil billDownload invoke success");
+            if (StringUtils.isBlank(url)) {
+                return resultList;
+            }
+            ZipEntry zipFile;
+            //循环读取zip中的cvs文件，无法使用jdk自带，因为文件名中有中文
+            while ((zipFile = in.getNextEntry()) != null) {
+                if (zipFile.isDirectory()) {
+                    continue;
+                }
+                //获得cvs名字
+                String fileName = zipFile.getName();
+                logger.info("alipay cvs {} -----", fileName);
+                //检测文件是否存在
+                if (fileName != null && fileName.indexOf('.') != -1 && !fileName.contains("汇总")) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        resultList.add(line);
+                    }
+                }
+            }
+            return resultList;
         } catch (Exception e) {
             logger.error("AliPayUtil billDownload error", e);
         }
-        return null;
+        return resultList;
 
     }
 
