@@ -1,4 +1,4 @@
-package com.dubbo.common.util.aliBaba;
+package com.dubbo.common.util.alibaba;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
