@@ -180,5 +180,6 @@
         <module>dubbo-wx</module>
 		<module>dubbo-nacos</module>
         <module>boot-json</module>
-    </modules>
+		<module>boot-es</module>
+	</modules>
 </project>
