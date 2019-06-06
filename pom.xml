@@ -18,11 +18,11 @@
 		<mysql.version>5.1.46</mysql.version>
 		<mybatis-plus-boot-starter.version>3.0.4</mybatis-plus-boot-starter.version>
 		<HikariCP.version>2.4.13</HikariCP.version>
-		<fastjson.version>1.2.39</fastjson.version>
-		<dubbo.version>2.6.2</dubbo.version>
+		<fastjson.version>1.2.58</fastjson.version>
+		<dubbo.version>2.7.1</dubbo.version>
 		<project.version>1.0.0</project.version>
-		<spring.cloud.alibaba>0.2.0.RELEASE</spring.cloud.alibaba>
-		<spring.boot.dubbo.version>0.2.0</spring.boot.dubbo.version>
+		<spring.cloud.alibaba>0.9.0.RELEASE</spring.cloud.alibaba>
+		<spring.boot.dubbo.version>0.2.1.RELEASE</spring.boot.dubbo.version>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -52,19 +52,19 @@
 				<artifactId>dubbo-spring-boot-actuator</artifactId>
 				<version>${spring.boot.dubbo.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>dubbo</artifactId>
-				<version>${dubbo.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba</groupId>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <dependency>
+				<groupId>org.apache.dubbo</groupId>
 				<artifactId>dubbo-rpc-rest</artifactId>
 				<version>${dubbo.version}</version>
 			</dependency>
-
 			<dependency>
-				<groupId>com.alibaba</groupId>
+                <groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
 				<version>${fastjson.version}</version>
 			</dependency>
@@ -179,7 +179,5 @@
 		<module>dubbo-common</module>
         <module>dubbo-wx</module>
 		<module>dubbo-nacos</module>
-        <module>boot-json</module>
-		<module>boot-es</module>
 	</modules>
 </project>

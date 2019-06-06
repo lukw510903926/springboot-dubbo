@@ -37,9 +37,8 @@
             <artifactId>dubbo-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
+            <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-rpc-rest</artifactId>
-            <version>2.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
