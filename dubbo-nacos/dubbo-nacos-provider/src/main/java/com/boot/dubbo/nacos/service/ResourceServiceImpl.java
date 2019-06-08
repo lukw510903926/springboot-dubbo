@@ -37,7 +37,7 @@ public class ResourceServiceImpl implements IResourceService {
             Resource resource = new Resource();
             resource.setId(localRandom.nextInt(100));
             resource.setCreated(LocalDateTime.now().minusDays(localRandom.nextInt(5)));
-            resource.setName(localRandom.nextInt(1000000)+"");
+            resource.setName(localRandom.nextInt(1000000) + "");
             list.add(resource);
         }
         return list;
@@ -45,7 +45,6 @@ public class ResourceServiceImpl implements IResourceService {
 
     @Override
     public String weChatProperties() {
-        return
-                JSONObject.toJSONString(weChatProperties);
+        return JSONObject.toJSONString(weChatProperties);
     }
 }

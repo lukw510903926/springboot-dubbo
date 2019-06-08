@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class NacosConfig {
 
     @Bean
-    @ConfigurationProperties(prefix = "we.chat")
+//    @ConfigurationProperties(prefix = "we.chat")
     public WeChatProperties weChatProperties(){
 
         return  new WeChatProperties();
