@@ -43,9 +43,9 @@
             </dependency>
             <!--alibaba begin-->
             <dependency>
-                <groupId>com.alibaba.boot</groupId>
+                <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo-spring-boot-starter</artifactId>
-                <version>${spring.boot.dubbo.version}</version>
+                <version>2.7.1</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba.boot</groupId>

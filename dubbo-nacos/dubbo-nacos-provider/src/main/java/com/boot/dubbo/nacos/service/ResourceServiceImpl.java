@@ -1,11 +1,11 @@
 package com.boot.dubbo.nacos.service;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.boot.dubbo.api.api.IResourceService;
 import com.boot.dubbo.api.entity.Resource;
 import com.dubbo.common.util.weChat.WeChatProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -45,6 +45,7 @@ public class ResourceServiceImpl implements IResourceService {
 
     @Override
     public String weChatProperties() {
-        return JSONObject.toJSONString(weChatProperties);
+        return
+                JSONObject.toJSONString(weChatProperties);
     }
 }
