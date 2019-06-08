@@ -1,9 +1,8 @@
 package com.boot.dubbo.nacos.config;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import com.alibaba.nacos.api.config.annotation.NacosConfigurationProperties;
 
 /**
  * @author : yangqi
@@ -14,32 +13,35 @@ import com.alibaba.nacos.api.config.annotation.NacosConfigurationProperties;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "we.chat")
-@NacosConfigurationProperties(dataId = "dubbo-nacos-provider", autoRefreshed = true)
 public class NacosWeChatProperties {
 
     /**
      * appId
      */
+    @NacosValue(value = "${we.chat.appId}", autoRefreshed = true)
     private String appId;
 
     /**
      *应用密钥
      */
+    @NacosValue(value = "${we.chat.appSecret:defaultValue}", autoRefreshed = true)
     private String appSecret;
 
     /**
      * 商户Id
      */
+    @NacosValue(value = "${we.chat.mchId}", autoRefreshed = true)
     private String mchId;
 
     /**
      * 商户秘钥
      */
+    @NacosValue(value = "${we.chat.mchKey}", autoRefreshed = true)
     private String mchKey;
 
     /**
      * 回调地址
      */
+    @NacosValue(value = "${we.chat.notifyUrl}", autoRefreshed = true)
     private String notifyUrl;
 }

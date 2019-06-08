@@ -34,6 +34,6 @@ public class NacosController {
     public String weChatProperties(){
 
         log.info("properties : {}",weChatProperties);
-        return notifyUrl;
+        return weChatProperties.getNotifyUrl();
     }
 }
