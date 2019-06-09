@@ -8,10 +8,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.apache.dubbo.config.annotation.Service;
+import org.apache.dubbo.rpc.protocol.rest.support.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.alibaba.dubbo.config.annotation.Service;
-import com.alibaba.dubbo.rpc.protocol.rest.support.ContentType;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dubbo.api.api.IUserService;
