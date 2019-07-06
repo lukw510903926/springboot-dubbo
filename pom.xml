@@ -93,18 +93,13 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus</artifactId>
-                <version>3.0.4</version>
+                <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
             <!-- apache common -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.9.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>4.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
