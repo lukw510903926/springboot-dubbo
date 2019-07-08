@@ -17,6 +17,14 @@ public interface CacheService {
 
 	void setRedisTemplate(RedisTemplate<String, Object> redisTemplate);
 
+
+	/**
+	 * 获取分布式锁
+	 * @param key
+	 * @return
+	 */
+	boolean lock(String key);
+
 	// =============================common============================
 	/**
 	 * 指定缓存失效时间
