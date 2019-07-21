@@ -1,6 +1,9 @@
 package com.dubbo.common.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dubbo.common.util.annotation.NotNull;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,7 +17,7 @@ import java.util.*;
  * @eamil 13507615840@163.com
  * @create 2018-10-25 22:31
  **/
-
+@Slf4j
 public class RequiredParameterValidator {
 
     private RequiredParameterValidator() {
@@ -37,6 +40,7 @@ public class RequiredParameterValidator {
                 }
             });
         }
+        log.info("validate fields {}", JSONObject.toJSONString(list));
         return validator(object, list);
     }
 
@@ -76,6 +80,7 @@ public class RequiredParameterValidator {
         return Result.result(builder.toString());
     }
 
+    @Data
     public static class Result {
 
         private boolean success;
@@ -88,22 +93,6 @@ public class RequiredParameterValidator {
             result.setMsg(msg);
             result.setSuccess(StringUtils.isBlank(msg));
             return result;
-        }
-
-        public boolean isSuccess() {
-            return success;
-        }
-
-        void setSuccess(boolean success) {
-            this.success = success;
-        }
-
-        public String getMsg() {
-            return msg;
-        }
-
-        void setMsg(String msg) {
-            this.msg = msg;
         }
     }
 }
