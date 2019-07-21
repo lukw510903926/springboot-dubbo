@@ -2,13 +2,13 @@ package com.boot.dubbo.server.service;
 
 import java.util.List;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.dubbo.api.api.IUserService;
 import com.boot.dubbo.api.entity.User;
 import com.boot.dubbo.api.mapper.UserMapper;
 import com.dubbo.common.util.exception.ServiceException;
+import org.apache.dubbo.config.annotation.Service;
 
 /**
  * @version V1.0

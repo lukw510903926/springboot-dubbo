@@ -2,7 +2,7 @@ package com.boot.dubbo.server.service;
 
 import com.boot.dubbo.api.api.IProductService;
 import com.boot.dubbo.api.entity.Product;
-import org.springframework.stereotype.Service;
+import org.apache.dubbo.config.annotation.Service;
 
 import java.util.Collections;
 import java.util.List;
