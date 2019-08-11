@@ -49,6 +49,7 @@ public class ExcelUtil {
             StringBuilder builder = new StringBuilder("curl 'http://localhost:18608/fail/mq/re_push?topic=trade&tag=paySuccessNotify");
             builder.append("&key=").append(orderId).append("&orderId=").append(orderId).append("';\n");
             IOUtils.write(builder.toString(), outputStream);
+            log.info("curl: {}",builder);
         }
     }
 
