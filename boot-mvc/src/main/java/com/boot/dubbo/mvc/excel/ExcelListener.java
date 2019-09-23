@@ -2,7 +2,7 @@ package com.boot.dubbo.mvc.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -16,22 +16,23 @@ import java.util.List;
  * @description : 订单批量发货Excel 解析
  */
 @Slf4j
-public class ExcelListener extends AnalysisEventListener<List<String>> {
+public class ExcelListener extends AnalysisEventListener<Student> {
 
 
-    private List<List<String>> data = new ArrayList<>();
+    private List<Student> list = new ArrayList<>();
 
     @Override
-    public void invoke(List<String> object, AnalysisContext context) {
-        data.add(object);
+    public void invoke(Student data, AnalysisContext context) {
+        System.out.println(JSON.toJSONString(context));
+        this.list.add(data);
     }
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        log.info("context : {}", JSONObject.toJSONString(context));
+
     }
 
-    public List<List<String>> getData() {
-        return data;
+    public List<Student> getData() {
+        return this.list;
     }
 }

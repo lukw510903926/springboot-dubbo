@@ -1,19 +1,17 @@
 package com.boot.dubbo.mvc.excel;
 
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.read.metadata.ReadWorkbook;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.WriteWorkbook;
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSBuilder;
-import com.aliyun.oss.OSSClientBuilder;
-import com.dubbo.common.util.oss.OssUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,22 +28,23 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class ExcelUtil {
 
-    private static OSS ossClient;
-
-    static {
-        OSSBuilder builder = new OSSClientBuilder();
-        ossClient = builder.build("oss-cn-hangzhou.aliyuncs.com", "LTAIKbzVDNNREHJj", "ZxQ5cpsdGbefqRJZuiokSabHRI5Db1");
-    }
-
     public static void main(String[] args) throws Exception {
-
-        uploadFile();
+        //uploadFile();
+        readExcel();
     }
 
 
-    static void downloadFile() {
-        InputStream oss2InputStream = OssUtil.getOSS2InputStream(ossClient, "ywwl-m3u8", "file/设备成本模板.xlsx");
-        log.info("oss2InputStream : {}", oss2InputStream);
+    static void readExcel() throws Exception {
+
+        ReadWorkbook readWorkbook = new ReadWorkbook();
+        ExcelListener excelListener = new ExcelListener();
+        readWorkbook.setClazz(Student.class);
+        readWorkbook.setCustomReadListenerList(Lists.newArrayList(excelListener));
+        readWorkbook.setInputStream(FileUtils.openInputStream(new File("/Users/yangqi/Desktop/2019-08-10_data.xlsx")));
+        ExcelReader excelReader = new ExcelReader(readWorkbook);
+        excelReader.read();
+        List<Student> data = excelListener.getData();
+        System.out.println(data);
     }
 
     private static void uploadFile() throws Exception {
