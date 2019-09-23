@@ -30,8 +30,8 @@ public class OutOrderExcelReader {
 
     public static void main(String[] args) throws Exception {
 
-        File file = new File("/Users/yangqi/Desktop/out_order.xlsx");
-        readExcel(new FileInputStream(file), "out_order.xlsx");
+        
+
     }
 
     public static void readExcel(InputStream inputStream, String fileName) throws Exception {

@@ -1,17 +1,19 @@
 package com.boot.dubbo.mvc.excel;
 
-import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.WriteWorkbook;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSBuilder;
 import com.aliyun.oss.OSSClientBuilder;
 import com.dubbo.common.util.oss.OssUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,20 +39,7 @@ public class ExcelUtil {
 
     public static void main(String[] args) throws Exception {
 
-        ExcelListener listener = new ExcelListener();
-        FileInputStream inputStream = new FileInputStream(new File("/Users/yangqi/Desktop/2019-08-10_data.xlsx"));
-        ExcelReader excelReader = new ExcelReader(inputStream, ExcelTypeEnum.XLSX, null, listener);
-        excelReader.read(new Sheet(1, 0));
-        List<List<String>> data = listener.getData();
-        List<String> orderIds = new ArrayList<>();
-        data.forEach(line -> orderIds.add(line.get(0)));
-        FileOutputStream outputStream = new FileOutputStream(new File("/Users/yangqi/Desktop/curl.txt"));
-        for (String orderId : orderIds) {
-            StringBuilder builder = new StringBuilder("curl 'http://localhost:18608/fail/mq/re_push?topic=trade&tag=paySuccessNotify");
-            builder.append("&key=").append(orderId).append("&orderId=").append(orderId).append("';\n");
-            IOUtils.write(builder.toString(), outputStream);
-            log.info("curl: {}",builder);
-        }
+        uploadFile();
     }
 
 
@@ -62,21 +51,25 @@ public class ExcelUtil {
     private static void uploadFile() throws Exception {
 
         List<Student> list = new ArrayList<>();
-
+        StyleExcelHandler handler = new StyleExcelHandler();
         for (int i = 0; i < 100; i++) {
             Student student = new Student();
+            student.setAge(i);
             student.setName("name" + ThreadLocalRandom.current().nextInt(1000)).setBirthday(new Date());
             list.add(student);
         }
-        File file = File.createTempFile("789", "xlsx");
-        FileOutputStream out = new FileOutputStream(file);
-        ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
-        //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
-        Sheet sheet1 = new Sheet(1, 0, Student.class);
-        writer.write(list, sheet1);
+        File file = new File("/Users/yangqi/Desktop/2019-08-10_data.xlsx");
+        WriteWorkbook writeWorkbook = new WriteWorkbook();
+        FileOutputStream outputStream = new FileOutputStream(file);
+        writeWorkbook.setOutputStream(outputStream);
+        writeWorkbook.setClazz(Student.class);
+        writeWorkbook.setExcelType(ExcelTypeEnum.XLSX);
+        writeWorkbook.setCustomWriteHandlerList(Lists.newArrayList(handler));
+        ExcelWriter writer = new ExcelWriter(writeWorkbook);
+        WriteSheet writeSheet = new WriteSheet();
+        //sheet1.setCustomWriteHandlerList(Lists.newArrayList(handler));
+        writer.write(list, writeSheet);
         writer.finish();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        OssUtil.uploadObject2OSS(ossClient, fileInputStream, "ywwl-m3u8", "file/789.xlsx");
     }
 
 }
