@@ -2,7 +2,6 @@ package com.boot.dubbo.mvc.excel;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ public class ExcelListener extends AnalysisEventListener<Student> {
 
     @Override
     public void invoke(Student data, AnalysisContext context) {
-        System.out.println(JSON.toJSONString(context));
         this.list.add(data);
     }
 
