@@ -9,14 +9,11 @@ import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class APIUtil {
-
-    private static List<String> array = Arrays.asList("wait", "equals", "toString", "hashCode", "getClass", "notify", "notifyAll");
 
     public static void main(String[] args) throws Exception {
 
@@ -46,12 +43,13 @@ public class APIUtil {
             for (Parameter parameter : parameters) {
                 builder.append("        param.put(\"").append(parameter.getName()).append("\",\"");
                 if (Number.class.isAssignableFrom(parameter.getType())) {
-                    builder.append(ThreadLocalRandom.current().nextInt(100, 20000)).append("\");\n");
+                    builder.append(ThreadLocalRandom.current().nextInt(100, 20000)).append("\");");
                 } else if (Date.class.isAssignableFrom(parameter.getType())) {
-                    builder.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\");\n");
+                    builder.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\");");
                 } else {
-                    builder.append(parameter.getName()).append("\");\n");
+                    builder.append(parameter.getName()).append("\");");
                 }
+                builder.append("\n");
             }
             builder.append("    }");
         }
