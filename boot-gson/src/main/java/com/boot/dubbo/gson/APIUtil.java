@@ -1,7 +1,6 @@
 package com.boot.dubbo.gson;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -31,14 +30,30 @@ public class APIUtil {
         builder.append("\nimport java.util.HashMap; \n\n");
         builder.append("public class ").append(clazz.getSimpleName()).append("Test {");
         for (Method method : methods) {
-            GetMapping annotation = method.getAnnotation(GetMapping.class);
-            if (annotation == null) {
+            GetMapping getMapping = method.getAnnotation(GetMapping.class);
+            String url = null;
+            RequestMethod requestMethod;
+            if (getMapping != null) {
+                url = getMapping.value()[0];
+                requestMethod = RequestMethod.GET;
+            }
+            if (url == null && method.isAnnotationPresent(PostMapping.class)) {
+                PostMapping postMapping = method.getAnnotation(PostMapping.class);
+                url = postMapping.value()[0];
+                requestMethod = RequestMethod.POST;
+            }
+            if (url == null && method.isAnnotationPresent(RequestMapping.class)) {
+                RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                url = mapping.value()[0];
+                requestMethod = mapping.method().length == 0 ? RequestMethod.GET : mapping.method()[0];
+            }
+            if (url == null) {
                 continue;
             }
             builder.append("\n\n    @Test\n");
             Parameter[] parameters = method.getParameters();
             builder.append("    public void ").append(method.getName()).append("(){ \n \n");
-            builder.append("        String apiPath = \"").append(annotation.value()[0]).append("\";\n");
+            builder.append("        String apiPath = \"").append(url).append("\";\n");
             builder.append("        Map<String,Object> param = new HashMap<>(); \n");
             for (Parameter parameter : parameters) {
                 builder.append("        param.put(\"").append(parameter.getName()).append("\",\"");
