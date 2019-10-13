@@ -1,5 +1,6 @@
 package com.boot.dubbo.gson;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -14,6 +15,18 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class APIUtil {
 
+    private static final String PACKAGE_NAME = "package com.boot.dubbo.gson;";
+
+    private static final String FILE_PATH = "D:/";
+
+    private static final String SUFFIX = ".java";
+
+    private static final String APP_KEY = "appKey";
+
+    private static final String USER_ID = "USER_ID";
+
+    private static final String API_HOST = "api_host";
+
     public static void main(String[] args) throws Exception {
 
         String resource = APIUtil.class.getClassLoader().getResource("").getPath();
@@ -25,10 +38,19 @@ public class APIUtil {
     private static void buildCode(Class<?> clazz) {
 
         Method[] methods = clazz.getMethods();
-        StringBuilder builder = new StringBuilder("\nimport org.junit.Test;");
+        String fileName = clazz.getSimpleName() + "Test";
+        StringBuilder builder = new StringBuilder(PACKAGE_NAME);
+        builder.append("\n\nimport org.junit.Test;");
+        builder.append("\nimport org.junit.Before;");
         builder.append("\nimport java.util.Map; ");
         builder.append("\nimport java.util.HashMap; \n\n");
-        builder.append("public class ").append(clazz.getSimpleName()).append("Test {");
+        builder.append("public class ").append(fileName).append(" { \n\n");
+        builder.append("    private Map<String,Object> param = new HashMap<>();");
+        builder.append("\n\n    @Before\n");
+        builder.append("    public void testBefore").append("(){ \n \n");
+        builder.append("        param.put(\"app_key").append("\",").append(APP_KEY + ");\n");
+        builder.append("        param.put(\"user_id").append("\",").append(USER_ID + ");\n");
+        builder.append("    }");
         for (Method method : methods) {
             GetMapping getMapping = method.getAnnotation(GetMapping.class);
             String url = null;
@@ -53,8 +75,7 @@ public class APIUtil {
             builder.append("\n\n    @Test\n");
             Parameter[] parameters = method.getParameters();
             builder.append("    public void ").append(method.getName()).append("(){ \n \n");
-            builder.append("        String apiPath = \"").append(url).append("\";\n");
-            builder.append("        Map<String,Object> param = new HashMap<>(); \n");
+            builder.append("        String apiPath = \"").append(API_HOST).append(url).append("\";\n");
             for (Parameter parameter : parameters) {
                 builder.append("        param.put(\"").append(parameter.getName()).append("\",\"");
                 if (Number.class.isAssignableFrom(parameter.getType())) {
@@ -70,6 +91,12 @@ public class APIUtil {
         }
         builder.append("\n}");
         System.out.println(builder);
+        File file = new File(FILE_PATH + fileName + SUFFIX);
+        try {
+            FileUtils.writeStringToFile(file, builder.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getInstance(String path, List<Class<?>> list) throws Exception {
