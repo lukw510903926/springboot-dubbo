@@ -15,9 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class APIUtil {
 
-    private static final String PACKAGE_NAME = "package com.boot.dubbo.gson;";
-
-    private static final String FILE_PATH = "D:/";
+    private static final String TEST_PACKAGE_NAME = "com.boot.dubbo.gson";
 
     private static final String SUFFIX = ".java";
 
@@ -29,17 +27,18 @@ public class APIUtil {
 
     public static void main(String[] args) throws Exception {
 
+        String testRootPath = getTestRootPath();
         String resource = APIUtil.class.getClassLoader().getResource("").getPath();
         List<Class<?>> list = new ArrayList<>();
         getInstance(resource, list);
-        list.forEach(APIUtil::buildCode);
+        list.forEach(entity -> buildCode(entity, testRootPath));
     }
 
-    private static void buildCode(Class<?> clazz) {
+    private static void buildCode(Class<?> clazz, String rootPath) {
 
         Method[] methods = clazz.getMethods();
         String fileName = clazz.getSimpleName() + "Test";
-        StringBuilder builder = new StringBuilder(PACKAGE_NAME + "\n\n");
+        StringBuilder builder = new StringBuilder("package " + TEST_PACKAGE_NAME + ";\n\n");
         builder.append("import org.junit.Test;\n");
         builder.append("import org.junit.Before;\n");
         builder.append("import java.util.Map; \n");
@@ -91,12 +90,17 @@ public class APIUtil {
         }
         builder.append("\n}");
         System.out.println(builder);
-        File file = new File(FILE_PATH + fileName + SUFFIX);
+        File file = new File(rootPath + File.separator + fileName + SUFFIX);
         try {
             FileUtils.writeStringToFile(file, builder.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getTestRootPath() {
+        String resource = APIUtil.class.getClassLoader().getResource(".").getPath();
+        return resource.substring(0, resource.indexOf("/target/classes/")) + "/src/test/" + (TEST_PACKAGE_NAME.replace(".", File.separator));
     }
 
     private static void getInstance(String path, List<Class<?>> list) throws Exception {
