@@ -23,9 +23,9 @@ public class APIUtil {
 
     private static final String APP_KEY = "appKey";
 
-    private static final String USER_ID = "USER_ID";
+    private static final String USER_ID = "123456";
 
-    private static final String API_HOST = "api_host";
+    private static final String API_HOST = "http://localhost:8080/";
 
     public static void main(String[] args) throws Exception {
 
@@ -48,8 +48,8 @@ public class APIUtil {
         builder.append("    private Map<String,Object> param = new HashMap<>();\n\n");
         builder.append("    @Before\n");
         builder.append("    public void testBefore").append("(){ \n \n");
-        builder.append("        param.put(\"app_key").append("\",").append(APP_KEY + ");\n");
-        builder.append("        param.put(\"user_id").append("\",").append(USER_ID + ");\n");
+        builder.append("        param.put(\"app_key").append("\",\"").append(APP_KEY + "\");\n");
+        builder.append("        param.put(\"user_id").append("\",\"").append(USER_ID + "\");\n");
         builder.append("    }\n\n");
         for (Method method : methods) {
             GetMapping getMapping = method.getAnnotation(GetMapping.class);
