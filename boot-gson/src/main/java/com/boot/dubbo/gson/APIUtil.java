@@ -39,18 +39,18 @@ public class APIUtil {
 
         Method[] methods = clazz.getMethods();
         String fileName = clazz.getSimpleName() + "Test";
-        StringBuilder builder = new StringBuilder(PACKAGE_NAME);
-        builder.append("\n\nimport org.junit.Test;");
-        builder.append("\nimport org.junit.Before;");
-        builder.append("\nimport java.util.Map; ");
-        builder.append("\nimport java.util.HashMap; \n\n");
+        StringBuilder builder = new StringBuilder(PACKAGE_NAME + "\n\n");
+        builder.append("import org.junit.Test;\n");
+        builder.append("import org.junit.Before;\n");
+        builder.append("import java.util.Map; \n");
+        builder.append("import java.util.HashMap; \n\n");
         builder.append("public class ").append(fileName).append(" { \n\n");
-        builder.append("    private Map<String,Object> param = new HashMap<>();");
-        builder.append("\n\n    @Before\n");
+        builder.append("    private Map<String,Object> param = new HashMap<>();\n\n");
+        builder.append("    @Before\n");
         builder.append("    public void testBefore").append("(){ \n \n");
         builder.append("        param.put(\"app_key").append("\",").append(APP_KEY + ");\n");
         builder.append("        param.put(\"user_id").append("\",").append(USER_ID + ");\n");
-        builder.append("    }");
+        builder.append("    }\n\n");
         for (Method method : methods) {
             GetMapping getMapping = method.getAnnotation(GetMapping.class);
             String url = null;
@@ -72,7 +72,7 @@ public class APIUtil {
             if (url == null) {
                 continue;
             }
-            builder.append("\n\n    @Test\n");
+            builder.append("    @Test\n");
             Parameter[] parameters = method.getParameters();
             builder.append("    public void ").append(method.getName()).append("(){ \n \n");
             builder.append("        String apiPath = \"").append(API_HOST).append(url).append("\";\n");
@@ -87,7 +87,7 @@ public class APIUtil {
                 }
                 builder.append("\n");
             }
-            builder.append("    }");
+            builder.append("    }\n\n");
         }
         builder.append("\n}");
         System.out.println(builder);
@@ -99,7 +99,7 @@ public class APIUtil {
         }
     }
 
-    public static void getInstance(String path, List<Class<?>> list) throws Exception {
+    private static void getInstance(String path, List<Class<?>> list) throws Exception {
 
         File file = new File(path);
         File[] array = file.listFiles();
