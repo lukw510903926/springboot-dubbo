@@ -1,7 +1,5 @@
 package com.dubbo.common.util;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,6 +9,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author : yangqi
@@ -29,10 +29,13 @@ public class DateUtils {
      */
     public static final String DEFAULT_DATE_FORMATTER = "yyyy-MM-dd HH:mm:ss";
 
+    
     /**
      * 天
      */
     public static final String DEFAULT_DAY_FORMATTER = "yyyy-MM-dd";
+
+    public static final DateTimeFormatter DAY_PATTERN = DateTimeFormatter.ofPattern(DEFAULT_DAY_FORMATTER);
 
     /**
      * 天
@@ -91,14 +94,14 @@ public class DateUtils {
     public static List<String> getDays(String startDay, String endDay) {
 
         List<String> list = new ArrayList<>();
-        LocalDate start = LocalDate.parse(startDay, DateTimeFormatter.ofPattern(DEFAULT_DAY_FORMATTER));
-        LocalDate end = LocalDate.parse(endDay, DateTimeFormatter.ofPattern(DEFAULT_DAY_FORMATTER));
+        LocalDate start = LocalDate.parse(startDay, DAY_PATTERN);
+        LocalDate end = LocalDate.parse(endDay, DAY_PATTERN);
         try {
             while (start.compareTo(end) < 0) {
-                list.add(start.format(DateTimeFormatter.ofPattern(DEFAULT_DAY_FORMATTER)));
+                list.add(start.format(DAY_PATTERN));
                 start = start.plusDays(1);
             }
-            list.add(end.format(DateTimeFormatter.ofPattern(DEFAULT_DAY_FORMATTER)));
+            list.add(end.format(DAY_PATTERN));
         } catch (Exception e) {
             log.error(" startDay : {}  endDay : {} 传入时间有误,异常为 : {}", startDay, endDay, e);
         }
