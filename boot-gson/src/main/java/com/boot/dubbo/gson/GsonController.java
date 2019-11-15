@@ -17,7 +17,7 @@ public class GsonController {
         return person;
     }
 
-    @GetMapping("/gson/format")
+    @GetMapping("/gson/format/list")
     public Person listUser(String name, Integer age, Date date) {
         Person person = new Person();
         person.setBirthday(new Date());
