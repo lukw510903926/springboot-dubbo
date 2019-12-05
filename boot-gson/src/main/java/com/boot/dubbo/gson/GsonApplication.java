@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 
@@ -14,9 +13,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 public class GsonApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(GsonApplication.class, args);
-        Person bean = context.getBean(Person.class);
-        System.out.println(bean);
+        SpringApplication.run(GsonApplication.class, args);
     }
 
     @Bean
