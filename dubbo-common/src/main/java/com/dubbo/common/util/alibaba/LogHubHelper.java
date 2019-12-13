@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 public class LogHubHelper implements InitializingBean {
 
     @Autowired
-    private LogHubProjectProperties logHubProjectProperties;
+    private LogHubProperties logHubProperties;
 
     private Producer producer;
 
@@ -31,10 +31,10 @@ public class LogHubHelper implements InitializingBean {
     public void afterPropertiesSet() {
 
         ProjectConfigs projectConfigs = new ProjectConfigs();
-        String project = this.logHubProjectProperties.getProject();
-        String endpoint = this.logHubProjectProperties.getEndpoint();
-        String accessKeyId = this.logHubProjectProperties.getAccessKeyId();
-        String accessKeySecret = this.logHubProjectProperties.getAccessKeySecret();
+        String project = this.logHubProperties.getProject();
+        String endpoint = this.logHubProperties.getEndpoint();
+        String accessKeyId = this.logHubProperties.getAccessKeyId();
+        String accessKeySecret = this.logHubProperties.getAccessKeySecret();
         ProjectConfig projectConfig = new ProjectConfig(project, endpoint, accessKeyId, accessKeySecret);
         projectConfigs.put(projectConfig);
         ProducerConfig producerConfig = new ProducerConfig(projectConfigs);
@@ -47,7 +47,7 @@ public class LogHubHelper implements InitializingBean {
 
 
         LogItem logItem = getLogItem(object);
-        this.producer.send(this.logHubProjectProperties.getProject(), store, logItem);
+        this.producer.send(this.logHubProperties.getProject(), store, logItem);
     }
 
     /**

@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @description :
  */
 @Data
-public class LogHubProjectProperties implements Serializable {
+public class LogHubProperties implements Serializable {
 
 
     private static final long serialVersionUID = -5952997891481002674L;
