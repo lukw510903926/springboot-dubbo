@@ -181,6 +181,10 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>com.ctrip.framework.apollo</groupId>
+                <artifactId>apollo-client</artifactId>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -206,5 +210,6 @@
         <module>dubbo-wx</module>
         <module>dubbo-nacos</module>
         <module>boot-gson</module>
+        <module>boot-apollo</module>
     </modules>
 </project>
