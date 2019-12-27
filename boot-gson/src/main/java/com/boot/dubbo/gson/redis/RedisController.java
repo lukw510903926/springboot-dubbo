@@ -51,7 +51,7 @@ public class RedisController {
         jedis.zadd("wdzg:ad:zset", 3000, "hash1234567");
         Set<String> zrange = jedis.zrange("wdzg:ad:zset", 0, 0);
         jedis.zrem("wdzg:ad:zset", Lists.newArrayList(zrange).get(0));
-        Long hash12345679 = jedis.zrank("wdzg:ad:zset", "hash12345679");
+        jedis.zrank("wdzg:ad:zset", "hash12345679");
         jedis.close();
         return zrange;
     }
