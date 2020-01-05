@@ -18,7 +18,7 @@
         <mysql.version>5.1.46</mysql.version>
         <mybatis.plus.version>3.3.0</mybatis.plus.version>
         <fastjson.version>1.2.58</fastjson.version>
-        <dubbo.version>2.7.5</dubbo.version>
+        <dubbo.version>2.7.1</dubbo.version>
         <project.version>1.0.0</project.version>
         <spring.cloud.alibaba>2.1.1.RELEASE</spring.cloud.alibaba>
     </properties>
@@ -65,6 +65,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>4.2.0</version>
             </dependency>
             <dependency>
                 <groupId>com.aliyun.oss</groupId>

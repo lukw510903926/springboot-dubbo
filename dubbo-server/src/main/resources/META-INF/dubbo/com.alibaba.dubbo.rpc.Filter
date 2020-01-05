@@ -1,3 +1,3 @@
-exceptionFilter=com.alibaba.dubbo.rpc.filter.ExceptionFilter
+exceptionFilter=org.apache.dubbo.rpc.filter.ExceptionFilter
 providerExceptionFilter=com.boot.dubbo.api.filter.ProviderExceptionFilter
 providerTokenFilter=com.boot.dubbo.api.filter.ProviderTokenFilter
