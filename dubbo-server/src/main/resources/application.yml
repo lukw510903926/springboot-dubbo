@@ -1,9 +1,9 @@
 spring:
   datasource:
-#    schema: classpath:/db/schema-h2.sql
-#    data: classpath:/db/data-h2.sql
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/test
+    #    schema: classpath:/db/schema-h2.sql
+    #    data: classpath:/db/data-h2.sql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=CONVERT_TO_NULL
     username: root
     password: root
     continue-on-error: true
@@ -11,17 +11,11 @@ mybatis-plus:
   mapper-locations: classpath:/mapper/*Mapper.xml
   typeAliasesPackage: com.boot.dubbo.api.entity
   global-config:
-    refresh: true
     db-config:
-      #数据库自增
       id-type: auto
-      field-strategy: NOT_EMPTY
-      #数据库表名下划线
       table-underline: true
-      #逻辑未删除
-      logic-delete-value: 0
-      #逻辑删除
-      logic-not-delete-value: 1
+      logic-not-delete-value: 0
+      logic-delete-value: 1
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: false
