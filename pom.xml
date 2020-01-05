@@ -16,7 +16,7 @@
         <jdk.version>1.8</jdk.version>
         <project.encoding>UTF-8</project.encoding>
         <mysql.version>5.1.46</mysql.version>
-        <mybatis-plus-boot-starter.version>3.0.4</mybatis-plus-boot-starter.version>
+        <mybatis.plus.version>3.3.0</mybatis.plus.version>
         <fastjson.version>1.2.58</fastjson.version>
         <dubbo.version>2.7.5</dubbo.version>
         <project.version>1.0.0</project.version>
@@ -91,12 +91,12 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <version>${mybatis.plus.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <version>${mybatis.plus.version}</version>
             </dependency>
             <!-- apache common -->
             <dependency>
