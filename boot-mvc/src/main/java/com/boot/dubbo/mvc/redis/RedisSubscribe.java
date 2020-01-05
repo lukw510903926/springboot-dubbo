@@ -3,10 +3,8 @@ package com.boot.dubbo.mvc.redis;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.stereotype.Component;
 
 /**
  * @author : yangqi
@@ -15,11 +13,10 @@ import org.springframework.stereotype.Component;
  * @since : 2019/7/28 10:39
  */
 @Slf4j
-@Component
-public class RedisSubscribe  extends MessageListenerAdapter {
+public class RedisSubscribe extends MessageListenerAdapter {
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

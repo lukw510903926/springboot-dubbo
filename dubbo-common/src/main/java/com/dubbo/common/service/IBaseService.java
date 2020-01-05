@@ -1,20 +1,21 @@
 package com.dubbo.common.service;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.dubbo.common.util.ReflectionUtils;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.commons.lang3.ArrayUtils;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version V1.0
@@ -36,7 +37,7 @@ public interface IBaseService<T> extends IService<T> {
         }
         T t = list.get(0);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
-        if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty())) {
+        if (null == tableInfo || StringUtils.isBlank(tableInfo.getKeyProperty())) {
             throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
         }
         String idProperty = tableInfo.getKeyProperty();
@@ -60,10 +61,11 @@ public interface IBaseService<T> extends IService<T> {
 
     default IPage<T> page(Page<T> page, T t) {
 
-        if (ArrayUtils.isEmpty(page.descs()) && ArrayUtils.isEmpty(page.ascs())) {
+        if (CollectionUtils.isEmpty(page.getOrders())) {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
-            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyColumn())) {
-                page.setDesc(tableInfo.getKeyColumn());
+            if (null != tableInfo && StringUtils.isNotBlank(tableInfo.getKeyColumn())) {
+                ArrayList<OrderItem> orderItems = Lists.newArrayList(OrderItem.asc(tableInfo.getKeyColumn()));
+                page.setOrders(orderItems);
             }
         }
         return page(page, new QueryWrapper<>(t));
