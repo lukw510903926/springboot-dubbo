@@ -1,7 +1,6 @@
 package com.boot.dubbo.client.config;
 
 import com.boot.dubbo.api.api.IProductService;
-import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ConsumerConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,6 @@ import org.springframework.context.annotation.Configuration;
 public class DubboConfig {
 
     @Autowired
-    private ApplicationConfig applicationConfig;
-
-    @Autowired
     private ConsumerConfig consumerConfig;
 
     @Bean
@@ -30,7 +26,6 @@ public class DubboConfig {
 
         ReferenceConfig<IProductService> referenceConfig = new ReferenceConfig<>();
         referenceConfig.setInterface(IProductService.class);
-        referenceConfig.setApplication(applicationConfig);
         referenceConfig.setConsumer(consumerConfig);
         return referenceConfig.get();
     }
