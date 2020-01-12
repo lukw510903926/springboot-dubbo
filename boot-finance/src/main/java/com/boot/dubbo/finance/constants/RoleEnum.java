@@ -2,6 +2,11 @@ package com.boot.dubbo.finance.constants;
 
 import java.util.Optional;
 
+/**
+ * @author : yangqi
+ * @description :
+ * @since : 2020/1/12 18:00
+ */
 public enum RoleEnum {
 
     UN_KNOW(0, "未知"),
@@ -10,7 +15,9 @@ public enum RoleEnum {
 
     PLATFORM(2, "平台"),
 
-    DISTRIBUTION(3, "分佣人");
+    STAR(3, "达人"),
+
+    PROMOTER(4, "推广人");
 
     private int code;
 

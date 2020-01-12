@@ -4,22 +4,22 @@ import com.boot.dubbo.finance.dto.UserOrderDTO;
 
 public class OrderPaySuccessHandler {
 
-    public void handleOrderPaySuccess(UserOrderDTO UserOrderDTO){
+    public void handleOrderPaySuccess(UserOrderDTO userOrderDTO) {
 
-        this.handleSeller();
-        this.handlePlatform();
-        this.handleDistribution();
+        this.handleSeller(userOrderDTO);
+        this.handlePlatform(userOrderDTO);
+        this.handleDistribution(userOrderDTO);
     }
 
-    public void handleSeller(){
-
-    }
-
-    public void handlePlatform(){
+    public void handleSeller(UserOrderDTO userOrderDTO) {
 
     }
 
-    public void handleDistribution(){
+    public void handlePlatform(UserOrderDTO userOrderDTO) {
+
+    }
+
+    public void handleDistribution(UserOrderDTO userOrderDTO) {
 
     }
 }
