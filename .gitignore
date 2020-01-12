@@ -6,3 +6,4 @@
 *.iml
 /*.log
 logs/*.log
+boot-es/
