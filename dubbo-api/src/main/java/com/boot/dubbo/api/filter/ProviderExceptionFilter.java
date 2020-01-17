@@ -1,19 +1,18 @@
 package com.boot.dubbo.api.filter;
 
+import java.lang.reflect.Method;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.common.utils.StringUtils;
-import org.apache.dubbo.rpc.AppResponse;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.rpc.RpcResult;
 import org.apache.dubbo.rpc.service.GenericService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Method;
 
 /**
  * <p>
@@ -30,7 +29,7 @@ public class ProviderExceptionFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
 
-        logger.info(" ==Provider Exception Filter==");
+        this.logger.info(" ==Provider Exception Filter==");
         Result result = invoker.invoke(invocation);
         if (result.hasException() && GenericService.class != invoker.getInterface()) {
             try {
@@ -45,7 +44,7 @@ public class ProviderExceptionFilter implements Filter {
                         return result;
                     }
                 }
-                logger.error("dubbo provider has undeclared exception which called by " + RpcContext.getContext().getRemoteHost()
+                this.logger.error("dubbo provider has undeclared exception which called by " + RpcContext.getContext().getRemoteHost()
                         + ". service: " + invoker.getInterface().getName() + ", method: " + invocation.getMethodName()
                         + ", exception: " + exception.getClass().getName() + ": " + exception.getMessage(), exception);
 
@@ -58,14 +57,12 @@ public class ProviderExceptionFilter implements Filter {
                 if (className.startsWith("java.") || className.startsWith("javax.")) {
                     return result;
                 }
-                // directly throw if it's dubbo exception
                 if (exception instanceof RpcException) {
                     return result;
                 }
-                // otherwise, wrap with RuntimeException and throw back to the client
-                return new AppResponse(new RuntimeException(StringUtils.toString(exception)));
+                return new RpcResult(new RuntimeException(StringUtils.toString(exception)));
             } catch (Exception e) {
-                logger.warn("Fail to ExceptionFilter when called by " + RpcContext.getContext().getRemoteHost()
+                this.logger.warn("Fail to ExceptionFilter when called by " + RpcContext.getContext().getRemoteHost()
                         + ". service: " + invoker.getInterface().getName() + ", method: " + invocation.getMethodName()
                         + ", exception: " + e.getClass().getName() + ": " + e.getMessage(), e);
                 return result;
