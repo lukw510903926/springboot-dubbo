@@ -215,5 +215,6 @@
         <module>boot-gson</module>
         <module>boot-apollo</module>
         <module>boot-finance</module>
+        <module>boot-gateway</module>
     </modules>
 </project>
