@@ -1,17 +1,20 @@
 package com.boot.dubbo.gateway.filter;
 
-import com.dubbo.common.util.http.RestHttpClient;
-import java.nio.charset.StandardCharsets;
+import com.dubbo.common.util.log.LogUtils;
+import java.time.Duration;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyExtractors;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -24,22 +27,36 @@ import reactor.core.publisher.Mono;
 @Component
 public class GatewayFilter implements WebFilter {
 
+    private static final String PROXY_HOST = "http://localhost:8090";
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
         String requestUri = exchange.getRequest().getPath().pathWithinApplication().value();
-        log.info(" requestPath : {}", exchange.getRequest().getPath());
-        log.info("requestUri {}", requestUri);
-        String result = RestHttpClient.get("http://localhost:8090/gson/format");
-        return writeMsg(exchange, result);
+        log.info(" requestPath : {} requestUri : {}", exchange.getRequest().getPath(), requestUri);
+        HttpMethod method = HttpMethod.valueOf(exchange.getRequest().getMethodValue());
+        WebClient.RequestBodySpec requestBodySpec = WebClient.create().method(method).uri(PROXY_HOST + requestUri);
+        return handleRequestBody(requestBodySpec, exchange, 3000);
     }
 
-    public static Mono<Void> writeMsg(ServerWebExchange exchange, String msg) {
+    private Mono<Void> handleRequestBody(final WebClient.RequestBodySpec requestBodySpec, final ServerWebExchange exchange, final long timeout) {
 
         ServerHttpResponse response = exchange.getResponse();
-        exchange.getAttributes().put("original_response_content_type", MediaType.parseMediaType(MediaType.APPLICATION_JSON_VALUE));
-        response.setStatusCode(HttpStatus.OK);
-        byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
-        DataBuffer buffer = response.bufferFactory().wrap(bytes);
-        return response.writeWith(Flux.just(buffer));
+        return requestBodySpec.headers(httpHeaders -> {
+            httpHeaders.addAll(exchange.getRequest().getHeaders());
+            httpHeaders.remove(HttpHeaders.HOST);
+        })
+                .contentType(buildMediaType(exchange))
+                .body(BodyInserters.fromDataBuffers(exchange.getRequest().getBody()))
+                .exchange()
+                .doOnError(e -> LogUtils.error(log, e::getMessage))
+                .timeout(Duration.ofMillis(timeout))
+                .flatMap(e -> response.writeWith(e.body(BodyExtractors.toDataBuffers())));
+    }
+
+    private MediaType buildMediaType(final ServerWebExchange exchange) {
+        return MediaType.valueOf(Optional.ofNullable(exchange
+                .getRequest()
+                .getHeaders().getFirst(HttpHeaders.CONTENT_TYPE))
+                .orElse(MediaType.APPLICATION_JSON_UTF8_VALUE));
     }
 }
