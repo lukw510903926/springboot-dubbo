@@ -1,12 +1,19 @@
 package com.dubbo.common.util.http;
 
+import com.dubbo.common.util.log.LogUtils;
 import java.time.Duration;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.reactive.function.BodyExtractors;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
@@ -17,9 +24,10 @@ import reactor.core.publisher.Mono;
  * @gitHub : https://github.com/lukw510903926
  * @description :
  */
+@Slf4j
 public class WebClientUtil {
 
-    private static final Duration TIME_OUT = Duration.ofMillis(15);
+    private static final Duration TIME_OUT = Duration.ofMillis(3000);
 
     private static final MediaType MEDIA_TYPE = MediaType.APPLICATION_JSON;
 
@@ -72,6 +80,22 @@ public class WebClientUtil {
     private static RequestBodySpec uri(String url, HttpMethod method) {
 
         return WebClient.create().method(method).uri(url);
+    }
+
+    public static Mono<Void> exchangeRequest(ServerWebExchange exchange, String url) {
+
+        HttpMethod method = HttpMethod.valueOf(exchange.getRequest().getMethodValue());
+        WebClient.RequestBodySpec requestBodySpec = WebClient.create().method(method).uri(url);
+        ServerHttpResponse response = exchange.getResponse();
+        return requestBodySpec.headers(httpHeaders -> {
+            httpHeaders.addAll(exchange.getRequest().getHeaders());
+            httpHeaders.remove(HttpHeaders.HOST);
+        }).contentType(MEDIA_TYPE)
+                .body(BodyInserters.fromDataBuffers(exchange.getRequest().getBody()))
+                .exchange()
+                .doOnError(e -> LogUtils.error(log, e::getMessage))
+                .timeout(TIME_OUT)
+                .flatMap(e -> response.writeWith(e.body(BodyExtractors.toDataBuffers())));
     }
 
     private static void header(RequestBodySpec uri, Map<String, String> header) {
