@@ -4,6 +4,7 @@ import com.dubbo.common.util.log.LogUtils;
 import java.time.Duration;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -34,6 +35,10 @@ public class GatewayFilter implements WebFilter {
         String requestUri = exchange.getRequest().getPath().pathWithinApplication().value();
         log.info(" requestPath : {} requestUri : {}", exchange.getRequest().getPath(), requestUri);
         HttpMethod method = HttpMethod.valueOf(exchange.getRequest().getMethodValue());
+        String query = exchange.getRequest().getURI().getQuery();
+        if (StringUtils.isNoneBlank(query)) {
+            requestUri += "?" + query;
+        }
         WebClient.RequestBodySpec requestBodySpec = WebClient.create().method(method).uri(PROXY_HOST + requestUri);
         return handleRequestBody(requestBodySpec, exchange, 3000);
     }
@@ -44,8 +49,7 @@ public class GatewayFilter implements WebFilter {
         return requestBodySpec.headers(httpHeaders -> {
             httpHeaders.addAll(exchange.getRequest().getHeaders());
             httpHeaders.remove(HttpHeaders.HOST);
-        })
-                .contentType(buildMediaType(exchange))
+        }).contentType(buildMediaType(exchange))
                 .body(BodyInserters.fromDataBuffers(exchange.getRequest().getBody()))
                 .exchange()
                 .doOnError(e -> LogUtils.error(log, e::getMessage))
