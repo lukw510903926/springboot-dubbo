@@ -21,12 +21,12 @@ import reactor.core.publisher.Mono;
 /**
  * @author : yangqi
  * @email : lukewei@mockuai.com
- * @description :
+ * @description : 参考spring-cloud-gateway  WebClientWriteResponseFilter WebClientHttpRoutingFilter
  * @since : 2020-01-29 14:38
  */
 @Slf4j
 @Component
-public class GatewayFilter implements WebFilter {
+public class HttpRoutingFilter implements WebFilter {
 
     private static final String PROXY_HOST = "http://localhost:8090";
 
