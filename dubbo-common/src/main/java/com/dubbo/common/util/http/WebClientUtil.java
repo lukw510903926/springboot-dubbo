@@ -1,14 +1,19 @@
 package com.dubbo.common.util.http;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dubbo.common.util.log.LogUtils;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -64,6 +69,18 @@ public class WebClientUtil {
                 .bodyToMono(resultType).blockOptional(TIME_OUT).orElse(null);
     }
 
+    public static <V> V postMultipart(Map<String, Object> parameter, String url, InputStream inputStream, String fileName, Class<V> resultType) {
+
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part("fieldPart", "fieldValue");
+        builder.part(fileName, inputStream);
+        builder.part("jsonPart", new JSONObject());
+        if (MapUtils.isNotEmpty(parameter)) {
+            parameter.forEach(builder::part);
+        }
+        MultiValueMap<String, HttpEntity<?>> parts = builder.build();
+        return post(uri(url, HttpMethod.POST), builder.build(), MULTIPART_FORM, resultType);
+    }
 
     public static <V> V get(String url, Class<V> resultType) {
 
