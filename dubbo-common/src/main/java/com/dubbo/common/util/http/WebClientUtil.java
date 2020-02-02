@@ -4,12 +4,14 @@ import com.dubbo.common.util.log.LogUtils;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.reactive.function.BodyExtractors;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -134,18 +136,30 @@ public class WebClientUtil {
      */
     public static Mono<Void> exchangeRequest(ServerWebExchange exchange, String url) {
 
-        HttpMethod method = HttpMethod.valueOf(exchange.getRequest().getMethodValue());
+        ServerHttpRequest request = exchange.getRequest();
+        HttpMethod method = Optional.ofNullable(request.getMethod()).orElse(HttpMethod.GET);
         WebClient.RequestBodySpec requestBodySpec = WebClient.create().method(method).uri(url);
         ServerHttpResponse response = exchange.getResponse();
-        return requestBodySpec.headers(httpHeaders -> {
+        RequestBodySpec headers = requestBodySpec.headers(httpHeaders -> {
             httpHeaders.addAll(exchange.getRequest().getHeaders());
             httpHeaders.remove(HttpHeaders.HOST);
-        }).contentType(MEDIA_TYPE)
-                .body(BodyInserters.fromDataBuffers(exchange.getRequest().getBody()))
-                .exchange()
+        }).contentType(MEDIA_TYPE);
+        WebClient.RequestHeadersSpec<?> headersSpec = !requiresBody(method) ? headers : headers.body(BodyInserters.fromDataBuffers(request.getBody()));
+        return headersSpec.exchange()
                 .doOnError(e -> LogUtils.error(log, e::getMessage))
                 .timeout(TIME_OUT)
                 .flatMap(e -> response.writeWith(e.body(BodyExtractors.toDataBuffers())));
+    }
+
+    private static boolean requiresBody(HttpMethod method) {
+        switch (method) {
+            case PUT:
+            case POST:
+            case PATCH:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private static void header(RequestBodySpec uri, Map<String, String> header) {

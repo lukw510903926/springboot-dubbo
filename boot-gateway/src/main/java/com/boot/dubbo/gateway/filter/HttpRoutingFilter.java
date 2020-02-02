@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyExtractors;
@@ -30,30 +31,35 @@ public class HttpRoutingFilter implements WebFilter {
 
     private static final String PROXY_HOST = "http://localhost:8090";
 
+    private static final Duration TIME_OUT = Duration.ofMillis(3000);
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain webFilterChain) {
-        String requestUri = exchange.getRequest().getPath().pathWithinApplication().value();
-        log.info(" requestPath : {} requestUri : {}", exchange.getRequest().getPath(), requestUri);
-        HttpMethod method = HttpMethod.valueOf(exchange.getRequest().getMethodValue());
-        String query = exchange.getRequest().getURI().getQuery();
+
+        ServerHttpRequest request = exchange.getRequest();
+        String requestUri = request.getPath().pathWithinApplication().value();
+        log.info(" requestPath : {} requestUri : {}", request.getPath(), requestUri);
+        HttpMethod method = Optional.ofNullable(request.getMethod()).orElse(HttpMethod.GET);
+        String query = request.getURI().getQuery();
         if (StringUtils.isNoneBlank(query)) {
             requestUri += "?" + query;
         }
         WebClient.RequestBodySpec requestBodySpec = WebClient.create().method(method).uri(PROXY_HOST + requestUri);
-        return handleRequestBody(requestBodySpec, exchange, 3000);
+        return handleRequestBody(requestBodySpec, exchange);
     }
 
-    private Mono<Void> handleRequestBody(final WebClient.RequestBodySpec requestBodySpec, final ServerWebExchange exchange, final long timeout) {
+    private Mono<Void> handleRequestBody(final WebClient.RequestBodySpec requestBodySpec, final ServerWebExchange exchange) {
 
+        ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         return requestBodySpec.headers(httpHeaders -> {
-            httpHeaders.addAll(exchange.getRequest().getHeaders());
+            httpHeaders.addAll(request.getHeaders());
             httpHeaders.remove(HttpHeaders.HOST);
         }).contentType(buildMediaType(exchange))
-                .body(BodyInserters.fromDataBuffers(exchange.getRequest().getBody()))
+                .body(BodyInserters.fromDataBuffers(request.getBody()))
                 .exchange()
                 .doOnError(e -> LogUtils.error(log, e::getMessage))
-                .timeout(Duration.ofMillis(timeout))
+                .timeout(TIME_OUT)
                 .flatMap(e -> response.writeWith(e.body(BodyExtractors.toDataBuffers())));
     }
 
@@ -61,6 +67,6 @@ public class HttpRoutingFilter implements WebFilter {
         return MediaType.valueOf(Optional.ofNullable(exchange
                 .getRequest()
                 .getHeaders().getFirst(HttpHeaders.CONTENT_TYPE))
-                .orElse(MediaType.APPLICATION_JSON_UTF8_VALUE));
+                .orElse(MediaType.APPLICATION_JSON_VALUE));
     }
 }
