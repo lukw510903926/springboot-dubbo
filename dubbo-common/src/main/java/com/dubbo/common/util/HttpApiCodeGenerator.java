@@ -19,27 +19,49 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/4/18 20:45
+ */
 public class HttpApiCodeGenerator {
 
+    /**
+     * 测试文件包路径
+     */
     private static final String TEST_PACKAGE_NAME = "com.mockuai.wdzg.adcenter.core";
 
+    /**
+     * http 接口包路径
+     */
     private static final String HTTP_API_PACKAGE = "com.mockuai.wdzg.adcenter.core.mop.api";
 
     private static final String SUFFIX = ".java";
 
+    /**
+     * appKey
+     */
     private static final String APP_KEY = "554992ad80486d1c518b47b69bfd4f66";
 
+    /**
+     * 用户ID
+     */
     private static final String USER_ID = "123456";
 
+    /**
+     * http 接口 + 端口
+     */
     private static final String API_HOST = "http://localhost:18891/";
 
-    private static final List<String> IGNORE_PARAMETER = new ArrayList<>();
+    private static final List<String> IGNORE_PARAMETER = Stream.of("user_id", "app_key").collect(Collectors.toList());
 
-    static {
-        IGNORE_PARAMETER.add("user_id");
-        IGNORE_PARAMETER.add("app_key");
-    }
+    private static final String OFFSET = "offset";
+
+    private static final String COUNT = "count";
 
     public static void main(String[] args) {
 
@@ -107,34 +129,21 @@ public class HttpApiCodeGenerator {
             if (url == null) {
                 continue;
             }
+            if (url.startsWith("/")) {
+                url = url.substring(1);
+            }
             builder.append("    @Test\n");
             Parameter[] parameters = method.getParameters();
             builder.append("    public void ").append(method.getName()).append("() throws Exception { \n \n");
             builder.append("        String apiPath = \"").append(API_HOST).append(url).append("\";\n");
-            for (Parameter parameter : parameters) {
-                String args = Optional.ofNullable(parameter.getAnnotation(RequestParam.class)).map(RequestParam::value).orElse("");
-                args = StringUtils.isBlank(args) ? parameter.getName() : args;
-                if (IGNORE_PARAMETER.contains(args)) {
-                    continue;
-                }
-                builder.append("        param.put(\"").append(args).append("\",\"");
-
-                if (Number.class.isAssignableFrom(parameter.getType())) {
-                    builder.append(ThreadLocalRandom.current().nextInt(100, 20000)).append("\");");
-                } else if (Date.class.isAssignableFrom(parameter.getType())) {
-                    builder.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\");");
-                } else {
-                    builder.append(args).append("\");");
-                }
-                builder.append("\n");
-            }
+            buildParameter(builder, parameters);
             builder.append("        String result = OkHttpUtils.");
             if (requestMethod == RequestMethod.GET) {
                 builder.append("get");
             } else {
                 builder.append("sendHttpPost");
             }
-            builder.append("(apiPath,param);\n");
+            builder.append("(apiPath, param);\n");
             builder.append("        System.out.println(result);\n");
             builder.append("        isSuccess(result);\n");
             builder.append("    }\n\n");
@@ -151,6 +160,32 @@ public class HttpApiCodeGenerator {
             FileUtils.writeStringToFile(file, builder.toString());
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void buildParameter(StringBuilder builder, Parameter[] parameters) {
+
+        for (Parameter parameter : parameters) {
+            String args = Optional.ofNullable(parameter.getAnnotation(RequestParam.class)).map(RequestParam::value).orElse("");
+            args = StringUtils.isBlank(args) ? parameter.getName() : args;
+            if (IGNORE_PARAMETER.contains(args)) {
+                continue;
+            }
+            builder.append("        param.put(\"").append(args).append("\", \"");
+            if (Number.class.isAssignableFrom(parameter.getType())) {
+                if (args.equalsIgnoreCase(COUNT)) {
+                    builder.append("20\");");
+                } else if (args.equalsIgnoreCase(OFFSET)) {
+                    builder.append("0\");");
+                } else {
+                    builder.append(ThreadLocalRandom.current().nextInt(100, 20000)).append("\");");
+                }
+            } else if (Date.class.isAssignableFrom(parameter.getType())) {
+                builder.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).append("\");");
+            } else {
+                builder.append(args).append("\");");
+            }
+            builder.append("\n");
         }
     }
 
