@@ -69,7 +69,7 @@ public class Product implements Serializable {
     private String goodsPic;
 
     /**
-     *封面 图片
+     * 封面 图片
      */
     private String coverPic;
 

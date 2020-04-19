@@ -19,7 +19,11 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * <p>
@@ -58,9 +62,9 @@ public class WeChatServiceImpl implements WeChatService {
      * 微信退款
      */
     private static final String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-    
-    private static final String RETURN_CODE ="return_code";
-    
+
+    private static final String RETURN_CODE = "return_code";
+
     private static final String RESULT_CODE = "result_code";
 
     /**
