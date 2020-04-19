@@ -2,6 +2,7 @@ package com.dubbo.common.web;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -41,7 +42,7 @@ public class RestResult<T> implements Serializable {
     /**
      * 服务器当前时间
      */
-    private Date now = new Date();
+    private final Date now = new Date();
 
     /**
      * 请求成功

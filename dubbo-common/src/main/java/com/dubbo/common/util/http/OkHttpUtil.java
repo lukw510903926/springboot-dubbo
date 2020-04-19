@@ -1,25 +1,37 @@
 package com.dubbo.common.util.http;
 
+import com.alibaba.fastjson.JSONObject;
+import com.dubbo.common.util.exception.ServiceException;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody.Builder;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.apache.commons.io.IOUtils;
+
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.dubbo.common.util.exception.ServiceException;
-import okhttp3.*;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.alibaba.fastjson.JSONObject;
-import okhttp3.FormBody.Builder;
-
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/4/19 11:02 下午
+ */
+@Slf4j
 public class OkHttpUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(OkHttpUtil.class);
 
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
 
-    private static final OkHttpClient CLIENT = new OkHttpClient().newBuilder().readTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS).writeTimeout(30, TimeUnit.SECONDS).build();
+    private static final OkHttpClient CLIENT = new OkHttpClient().newBuilder()
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build();
 
     private OkHttpUtil() {
     }
@@ -125,7 +137,7 @@ public class OkHttpUtil {
                 IOUtils.copy(body.byteStream(), outputStream);
             }
         } catch (Exception e) {
-            logger.error("文件下载失败 : url : {}, {}", url, e);
+            log.error("文件下载失败 : url : {}, {}", url, e);
             throw new ServiceException("文件下载失败 ");
         }
     }
@@ -135,13 +147,13 @@ public class OkHttpUtil {
         try {
             Response response = CLIENT.newCall(request).execute();
             if (!response.isSuccessful()) {
-                logger.error("request fail !! {}", response);
+                log.error("request fail !! {}", response);
                 throw new ServiceException("请求失败 :" + response);
             }
             ResponseBody body = response.body();
             return body == null ? null : body.string();
         } catch (Exception e) {
-            logger.error("request fail !! {}", e);
+            log.error("request fail !! ", e);
             throw new ServiceException("请求失败");
         }
     }

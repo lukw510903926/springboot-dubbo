@@ -4,25 +4,21 @@ import com.dubbo.common.util.aop.CacheDelete;
 import com.dubbo.common.util.aop.CachePut;
 import com.dubbo.common.util.aop.Cacheable;
 import com.dubbo.common.util.aop.SpringExpressionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Aspect
 public class RedisCacheManager {
-
-    private static final Logger logger = LoggerFactory.getLogger(RedisCacheManager.class);
-
-    private static final Class<Object> LOCK = Object.class;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -39,7 +35,7 @@ public class RedisCacheManager {
         String cacheName = cache.cacheNames();
         Object value = this.getCache(cacheName, key);
         if (value == null) {
-            synchronized (LOCK) {
+            synchronized (key) {
                 value = this.getCache(cacheName, key);
                 if (value == null) {
                     value = joinPoint.proceed();
@@ -47,7 +43,7 @@ public class RedisCacheManager {
             }
         }
         this.setCache(cacheName, key, value, cache.expire());
-        logger.info("cacheName值：{},key值：{}", cacheName, key);
+        log.info("cacheName值：{},key值：{}", cacheName, key);
         return value;
     }
 
@@ -69,13 +65,13 @@ public class RedisCacheManager {
         Method method = getMethod(joinPoint);
         CacheDelete cache = method.getAnnotation(CacheDelete.class);
         String keyValue = this.getKey(cache.key(), cache.prefix(), joinPoint);
-        this.deleteCache(cache.cacheName(),keyValue);
+        this.deleteCache(cache.cacheName(), keyValue);
         Object value = joinPoint.proceed();
         if (StringUtils.isBlank(keyValue)) {
             return value;
         }
         this.deleteCache(cache.cacheName(), keyValue);
-        logger.info("cacheDelete执行,name值：{},key值：{}", cache.cacheName(), keyValue);
+        log.info("cacheDelete执行,name值：{},key值：{}", cache.cacheName(), keyValue);
         return value;
     }
 

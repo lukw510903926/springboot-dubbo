@@ -7,7 +7,11 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -26,30 +30,19 @@ public class BodyReaderHttpServletRequestWrapper extends HttpServletRequestWrapp
 
     public BodyReaderHttpServletRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-        try (InputStream inputStream = request.getInputStream()) {
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-                char[] charBuffer = new char[128];
-                int bytesRead;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
+        StringBuilder builder = new StringBuilder();
+        try (InputStream inputStream = request.getInputStream();
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            char[] charBuffer = new char[128];
+            int bytesRead;
+            while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                builder.append(charBuffer, 0, bytesRead);
             }
         } catch (IOException ex) {
-            log.error("get inputStream fail : {}", ex);
+            log.error("get inputStream fail : ", ex);
             throw ex;
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    log.error("bufferedReader close fail : {}", ex);
-                }
-            }
         }
-        body = stringBuilder.toString();
+        body = builder.toString();
     }
 
     @Override

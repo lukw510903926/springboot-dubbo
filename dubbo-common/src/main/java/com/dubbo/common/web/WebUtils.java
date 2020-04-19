@@ -1,6 +1,7 @@
 package com.dubbo.common.web;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dubbo.common.util.exception.ServiceException;
 import com.dubbo.common.web.filter.ChannelFilter;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,7 +33,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
      */
     public static HttpServletRequest getRequest() {
 
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return ((ServletRequestAttributes) Optional.ofNullable(RequestContextHolder.getRequestAttributes()).orElseThrow(ServiceException::new)).getRequest();
     }
 
     /**
@@ -42,7 +43,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
      */
     public static HttpServletResponse getResponse() {
 
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        return ((ServletRequestAttributes) Optional.ofNullable(RequestContextHolder.getRequestAttributes()).orElseThrow(ServiceException::new)).getResponse();
     }
 
     /**

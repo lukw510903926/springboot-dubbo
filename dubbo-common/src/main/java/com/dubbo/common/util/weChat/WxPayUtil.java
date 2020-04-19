@@ -1,9 +1,8 @@
 package com.dubbo.common.util.weChat;
 
 import com.dubbo.common.util.exception.ServiceException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,20 +18,34 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 /**
- * 微信支付工具类
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description : 微信支付工具类
+ * @since : 2020/4/19 11:09 下午
  */
+@Slf4j
 public class WxPayUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(WxPayUtil.class);
-
-    private static final String CHART_SET = "UTF-8";
 
     private WxPayUtil() {
     }
@@ -98,14 +111,14 @@ public class WxPayUtil {
 
         try {
             MessageDigest md = MessageDigest.getInstance("md5");
-            byte[] array = md.digest(data.getBytes(CHART_SET));
+            byte[] array = md.digest(data.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
                 sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
-            logger.error("加密失败 : {}", e);
+            log.error("加密失败 :", e);
         }
         return null;
 
@@ -121,17 +134,17 @@ public class WxPayUtil {
     public static String hmacSha256(String data, String key) {
 
         try {
-            Mac sha256HMAC = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(CHART_SET), "HmacSHA256");
-            sha256HMAC.init(secretKey);
-            byte[] array = sha256HMAC.doFinal(data.getBytes(CHART_SET));
+            Mac hmacSHA256 = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            hmacSHA256.init(secretKey);
+            byte[] array = hmacSHA256.doFinal(data.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
             for (byte item : array) {
                 sb.append(Integer.toHexString((item & 0xFF) | 0x100));
             }
             return sb.toString().toUpperCase();
         } catch (Exception e) {
-            logger.error("加密失败 : {}", e);
+            log.error("加密失败 : ", e);
         }
         return null;
     }
@@ -160,7 +173,7 @@ public class WxPayUtil {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             DOMSource source = new DOMSource(document);
-            transformer.setOutputProperty(OutputKeys.ENCODING, CHART_SET);
+            transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             StringWriter writer = new StringWriter();
             StreamResult result = new StreamResult(writer);
@@ -168,7 +181,7 @@ public class WxPayUtil {
             output = writer.getBuffer().toString();
             writer.close();
         } catch (Exception ex) {
-            logger.error("加密失败 : {}", ex);
+            log.error("加密失败 : ", ex);
         }
         return output;
     }
@@ -184,7 +197,7 @@ public class WxPayUtil {
             Map<String, String> data = new HashMap<>();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            InputStream stream = new ByteArrayInputStream(strXML.getBytes(CHART_SET));
+            InputStream stream = new ByteArrayInputStream(strXML.getBytes(StandardCharsets.UTF_8));
             Document doc = documentBuilder.parse(stream);
             doc.getDocumentElement().normalize();
             NodeList nodeList = doc.getDocumentElement().getChildNodes();
@@ -219,7 +232,7 @@ public class WxPayUtil {
             con.setRequestProperty("Cache-Control", "no-cache");
             con.setRequestProperty("Content-Type", "text/xml");
             OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
-            out.write(new String(xmlStr.getBytes(CHART_SET)));
+            out.write(new String(xmlStr.getBytes(StandardCharsets.UTF_8)));
             out.flush();
             out.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -264,21 +277,6 @@ public class WxPayUtil {
         return ip;
     }
 
-    public static String notifyReturnSuccess() {
-
-        Map<String, String> map = new HashMap<>();
-        map.put("return_code", "SUCCESS");
-        map.put("return_msg", "OK");
-        return mapToXml(map);
-    }
-
-    public static String notifyReturnFail(String msg) {
-        Map<String, String> map = new HashMap<>();
-        map.put("return_code", "FAIL");
-        map.put("return_msg", "notify失败：" + msg);
-        return mapToXml(map);
-    }
-
     public static List<String> sendRequestXml(String urlStr, String xmlStr) {
 
         List<String> result = new ArrayList<>();
@@ -290,7 +288,7 @@ public class WxPayUtil {
             con.setRequestProperty("Cache-Control", "no-cache");
             con.setRequestProperty("Content-Type", "text/xml");
             OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
-            out.write(new String(xmlStr.getBytes(CHART_SET)));
+            out.write(new String(xmlStr.getBytes(StandardCharsets.UTF_8)));
             out.flush();
             out.close();
             BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -300,7 +298,7 @@ public class WxPayUtil {
             }
             br.close();
         } catch (Exception ex) {
-            logger.error("账单下载报错 {} ", ex);
+            log.error("账单下载报错  ", ex);
         }
         return result;
     }

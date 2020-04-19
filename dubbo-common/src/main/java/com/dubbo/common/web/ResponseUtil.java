@@ -18,18 +18,14 @@ import java.io.PrintWriter;
 public class ResponseUtil {
 
 
-
     private static final String DEFAULT_CONTENT_TYPE = "application/json;charset=UTF-8";
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
 
     /**
-     *
      * @param response
-     * @param status
-     *            状态
-     * @param msg
-     *            消息
+     * @param status   状态
+     * @param msg      消息
      */
     public static void writeErrorMsg(HttpServletResponse response, int status, String msg) {
 
@@ -42,14 +38,10 @@ public class ResponseUtil {
     }
 
     /**
-     *
      * @param response
-     * @param status
-     *            状态
-     * @param msg
-     *            消息
-     * @param success
-     *            请求是否成功
+     * @param status   状态
+     * @param msg      消息
+     * @param success  请求是否成功
      */
     public static void writeMsg(HttpServletResponse response, int status, String msg, boolean success) {
 
@@ -82,7 +74,7 @@ public class ResponseUtil {
             writer.flush();
             writer.close();
         } catch (Exception e) {
-            logger.error(" response write msg error : {}", e);
+            logger.error(" response write msg error : ", e);
         }
     }
 }
