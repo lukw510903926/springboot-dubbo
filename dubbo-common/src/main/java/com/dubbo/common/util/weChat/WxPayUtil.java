@@ -229,7 +229,7 @@ public class WxPayUtil {
         if (!SUCCESS.equals(result.get(RESULT_CODE))) {
             //直接返回微信支付商户号或密钥配置错误
             log.error("get wx prepay id error:{} paramMap {}", JSON.toJSONString(result), JSON.toJSONString(paramMap));
-            throw new com.aliyun.oss.ServiceException();
+            throw new ServiceException();
         }
         return result;
     }
