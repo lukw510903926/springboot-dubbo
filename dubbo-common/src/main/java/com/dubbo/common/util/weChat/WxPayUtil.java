@@ -1,8 +1,21 @@
 package com.dubbo.common.util.weChat;
 
+import com.alibaba.fastjson.JSON;
 import com.dubbo.common.util.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -10,6 +23,7 @@ import org.w3c.dom.NodeList;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +34,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,14 +44,16 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -48,6 +66,406 @@ import java.util.UUID;
 public class WxPayUtil {
 
     private WxPayUtil() {
+    }
+
+
+    public static final String SUCCESS = "SUCCESS";
+
+    /**
+     * 微信账单下载
+     */
+    private static final String DOWN_LOAD_BILL_URL = "https://api.mch.weixin.qq.com/pay/downloadbill";
+
+    /**
+     * 微信创建订单
+     */
+    private static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+    /**
+     * 微信退款
+     */
+    private static final String REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+
+    /**
+     * 订单查询
+     */
+    private static final String ORDER_QUERY = "https://api.mch.weixin.qq.com/pay/orderquery";
+
+    /**
+     * 退款查询接口
+     */
+    private static final String ORDER_REFUND_QUERY = "https://api.mch.weixin.qq.com/pay/refundquery";
+
+    public static final String RETURN_CODE = "return_code";
+
+    public static final String RESULT_CODE = "result_code";
+
+    private static final String SIGN_KEY = "sign";
+
+    private static final RequestConfig REQUEST_CONFIG = RequestConfig.custom()
+            .setSocketTimeout(10000)
+            .setConnectTimeout(10000)
+            .setConnectionRequestTimeout(10000)
+            .setRedirectsEnabled(true)
+            .build();
+
+    /**
+     * 查询微信订单信息
+     * 查询失败 返回空 调用者自己判断异常
+     *
+     * @param properties 支付账号信息
+     * @param orderSn    订单号(平台)
+     * @return map
+     */
+    public static Map<String, String> queryOrder(WeChatProperties properties, String orderSn) {
+
+        Map<String, String> paramMap = new TreeMap<>();
+        paramMap.put("appid", properties.getAppId());
+        paramMap.put("mch_id", properties.getMchId());
+        paramMap.put("nonce_str", getNonceStr());
+        paramMap.put("out_trade_no", orderSn);
+        String sign = generateSignature(paramMap, properties.getMchKey());
+        paramMap.put(SIGN_KEY, sign);
+
+        log.info("queryOrder>>>>>>>>>>>>>>>>>>>>>>>>>paramMap: {}", JSON.toJSONString(paramMap));
+        String xmlData = mapToXml(paramMap);
+        String response;
+        try {
+            response = requestXml(ORDER_QUERY, xmlData);
+        } catch (Exception e) {
+            log.error("微信订单查询失败", e);
+            return Collections.emptyMap();
+        }
+        log.info("queryOrder>>>>>>>>>>>>>>>>>>>>>>>>>response: {}", response);
+        Map<String, String> result = xmlToMap(response);
+        if (MapUtils.isEmpty(result)) {
+            return Collections.emptyMap();
+        }
+        if (!SUCCESS.equals(result.get(RESULT_CODE))) {
+            log.error("order query  error:{}", JSON.toJSONString(result));
+        }
+        return result;
+    }
+
+    /**
+     * 查询微信订单信息
+     * 查询失败 返回空 调用者自己判断异常
+     *
+     * @param properties 支付账号信息
+     * @param orderSn    订单号(平台)
+     * @return map
+     */
+    public static Map<String, String> queryRefundOrder(WeChatProperties properties, String orderSn) {
+
+        Map<String, String> paramMap = new TreeMap<>();
+        paramMap.put("appid", properties.getAppId());
+        paramMap.put("mch_id", properties.getMchId());
+        paramMap.put("nonce_str", getNonceStr());
+        paramMap.put("out_trade_no", orderSn);
+        String sign = generateSignature(paramMap, properties.getMchKey());
+        paramMap.put(SIGN_KEY, sign);
+
+        log.info("queryOrder>>>>>>>>>>>>>>>>>>>>>>>>>paramMap: {}", JSON.toJSONString(paramMap));
+        String xmlData = mapToXml(paramMap);
+        String response;
+        try {
+            response = requestXml(ORDER_REFUND_QUERY, xmlData);
+        } catch (Exception e) {
+            log.error("微信退款订单查询失败", e);
+            return Collections.emptyMap();
+        }
+        log.info("queryRefundOrder>>>>>>>>>>>>>>>>>>>>>>>>>response: {}", response);
+        Map<String, String> result = xmlToMap(response);
+        if (MapUtils.isEmpty(result)) {
+            return Collections.emptyMap();
+        }
+        if (!SUCCESS.equals(result.get(RESULT_CODE))) {
+            log.error(" query order refund   error:{}", JSON.toJSONString(result));
+        }
+        return result;
+    }
+
+    /**
+     * 微信统一下单接口
+     * <p>
+     * 获取H5 prepay_id
+     * 微信生成的预支付会话标识，用于后续接口调用中使用，该值有效期为2小时
+     *
+     * @param weChatOrder weChatOrder
+     * @param properties  properties
+     * @return map
+     * @throws com.aliyun.oss.ServiceException ServiceException
+     */
+    public static Map<String, String> getH5PayUrl(WeChatOrder weChatOrder, WeChatProperties properties) {
+
+        Map<String, String> paramMap = new TreeMap<>();
+        paramMap.put("attach", org.apache.commons.lang.StringUtils.trim(weChatOrder.getAttach()));
+        paramMap.put("appid", properties.getAppId());
+        paramMap.put("body", org.apache.commons.lang.StringUtils.trim(weChatOrder.getBody()));
+        paramMap.put("mch_id", properties.getMchId());
+        paramMap.put("nonce_str", getNonceStr());
+        paramMap.put("notify_url", properties.getNotifyUrl());
+        paramMap.put("out_trade_no", org.apache.commons.lang.StringUtils.trim(weChatOrder.getOutTradeNo()));
+        paramMap.put("spbill_create_ip", org.apache.commons.lang.StringUtils.trim(weChatOrder.getSpBillCreateIp()));
+        paramMap.put("total_fee", "" + weChatOrder.getTotalFee());
+        paramMap.put("trade_type", "MWEB");
+        String sign = generateSignature(paramMap, properties.getMchKey());
+        paramMap.put(SIGN_KEY, sign);
+
+        log.info("getH5PayUrl>>>>>>>>>>>>>>>>>>>>>>>>>paramMap: {}", JSON.toJSONString(paramMap));
+        String xmlData = mapToXml(paramMap);
+        String response;
+        try {
+            response = requestXml(PAY_URL, xmlData);
+        } catch (Exception e) {
+            log.error("微信H5下单失败", e);
+            throw new com.aliyun.oss.ServiceException(e);
+        }
+        log.info("getH5PayUrl>>>>>>>>>>>>>>>>>>>>>>>>>response: {}", response);
+        Map<String, String> result = xmlToMap(response);
+        if (MapUtils.isEmpty(result)) {
+            throw new com.aliyun.oss.ServiceException();
+        }
+        if (!SUCCESS.equals(result.get(RESULT_CODE))) {
+            //直接返回微信支付商户号或密钥配置错误
+            log.error("get wx prepay id error:{} paramMap {}", JSON.toJSONString(result), JSON.toJSONString(paramMap));
+            throw new com.aliyun.oss.ServiceException();
+        }
+        return result;
+    }
+
+    /**
+     * 创建订单
+     *
+     * @param weChatProperties properties
+     * @param weChatOrder      chatOrder
+     * @return map
+     */
+    public static Map<String, String> createJsApi(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
+
+        SortedMap<String, String> data = new TreeMap<>();
+        data.put("appid", weChatProperties.getAppId());
+        data.put("mch_id", weChatProperties.getMchId());
+        data.put("nonce_str", getNonceStr());
+        data.put("sign_type", "md5");
+        data.put("body", "游戏支付");
+        data.put("out_trade_no", weChatOrder.getOutTradeNo());
+        data.put("total_fee", weChatOrder.getTotalFee() + "");
+        data.put("spbill_create_ip", weChatOrder.getSpBillCreateIp());
+        data.put("notify_url", weChatProperties.getNotifyUrl());
+        data.put("trade_type", "JSAPI");
+        data.put("openid", "odU5Cv3t7jW7di0y-P-KWsbM8Kz0");
+        //统一下单
+        String sign = generateSignature(data, weChatProperties.getMchKey());
+        data.put(SIGN_KEY, sign);
+        String xml = mapToXml(data);
+        String resultXml = requestXml(PAY_URL, xml);
+        //返回结果转换
+        Map<String, String> resultMap = xmlToMap(resultXml);
+        log.info("创建支付请求数据：" + xml);
+        log.info("创建支付返回数据：" + resultMap.toString());
+        if (SUCCESS.equals(resultMap.get(RETURN_CODE)) && SUCCESS.equals(resultMap.get(RESULT_CODE))) {
+            Map<String, String> params = new TreeMap<>();
+            params.put("appId", resultMap.get("appid"));
+            params.put("timeStamp", getCurrentTimestamp());
+            params.put("nonceStr", getNonceStr());
+            params.put("package", "prepay_id=" + resultMap.get("prepay_id"));
+            params.put("signType", "md5");
+            String paySign = generateSignature(params, weChatProperties.getMchKey());
+            params.put("paySign", paySign);
+            params.put("orderNo", weChatOrder.getOutTradeNo());
+            return params;
+        } else {
+            throw new com.aliyun.oss.ServiceException("错误接口返回：" + resultMap.toString());
+        }
+    }
+
+    /**
+     * 微信验签
+     *
+     * @param paramMap   paramMap
+     * @param properties properties
+     * @return boolean
+     */
+    public static boolean signVerified(Map<String, String> paramMap, WeChatProperties properties) {
+
+        String sign = paramMap.get(SIGN_KEY);
+        if (MapUtils.isNotEmpty(paramMap)) {
+            Map<String, String> signMap = new TreeMap<>();
+            for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+                if (!SIGN_KEY.equals(entry.getKey())) {
+                    signMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+            String partnerKey = properties.getMchKey();
+            String actualSign = generateSignature(signMap, partnerKey);
+            log.info("weChat pay sign check paramMap : {} sign: {} actualSign :{}", JSON.toJSONString(paramMap), sign, actualSign);
+            return sign.equals(actualSign);
+        }
+        return false;
+    }
+
+    /**
+     * 账单下载
+     *
+     * @param billDate         日期
+     * @param weChatProperties 微信配置
+     */
+    public static String download(String billDate, WeChatProperties weChatProperties) {
+
+        Map<String, String> data = new TreeMap<>();
+        data.put("appid", weChatProperties.getAppId());
+        data.put("mch_id", weChatProperties.getMchId());
+        data.put("nonce_str", getNonceStr());
+        data.put("sign_type", "MD5");
+        data.put("bill_date", billDate);
+        //ALL，返回当日所有订单信息，默认值，SUCCESS，返回当日成功支付的订单 REFUND，返回当日退款订单，RECHARGE_REFUND，返回当日充值退款订单
+        data.put("bill_type", SUCCESS);
+        try {
+            String sign = generateSignature(data, weChatProperties.getMchKey());
+            data.put(SIGN_KEY, sign);
+            String xml = mapToXml(data);
+            log.info("request xml : {}", xml);
+            String results = requestXml(DOWN_LOAD_BILL_URL, xml);
+            log.info("result : {}", results);
+            return results;
+        } catch (Exception ex) {
+            log.error("下载微信账单失败", ex);
+            throw new com.aliyun.oss.ServiceException("下载微信账单失败");
+        }
+    }
+
+    /**
+     * 退款
+     *
+     * @param weChatProperties weChatProperties
+     * @param weChatOrder      weChatOrder
+     * @return String
+     * @throws com.aliyun.oss.ServiceException ServiceException
+     */
+    public static String refund(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
+
+        Map<String, String> data = new TreeMap<>();
+        data.put("appid", weChatProperties.getAppId());
+        data.put("mch_id", weChatProperties.getMchId());
+        data.put("nonce_str", getNonceStr());
+        data.put("out_trade_no", weChatOrder.getOutTradeNo());
+        data.put("out_refund_no", weChatOrder.getOutRefundNo());
+        data.put("total_fee", weChatOrder.getTotalFee() + "");
+        data.put("refund_fee", weChatOrder.getRefundFee() + "");
+        String sign = generateSignature(data, weChatProperties.getMchKey());
+        data.put(SIGN_KEY, sign);
+        String xml = mapToXml(data);
+        log.info("refund xml : {}", xml);
+        SSLConnectionSocketFactory socketFactory = initCert(weChatProperties);
+        String resultXml = requestSslXml(REFUND_URL, xml, socketFactory);
+        log.info("resultXml : {}", resultXml);
+
+        //返回结果转换
+        Map<String, String> result = xmlToMap(resultXml);
+        log.info("创建退款返回数据：{}", result.toString());
+        if (SUCCESS.equals(result.get(RETURN_CODE)) && SUCCESS.equals(result.get(RESULT_CODE))) {
+            log.info("resultMap : {}", result);
+            return result.get("transaction_id");
+        } else {
+            log.error("weChat refund fail result : {}", result.toString());
+            String msg = org.apache.commons.lang.StringUtils.isEmpty(result.get("err_code_des")) ? result.get("return_msg") : result.get("err_code_des");
+            throw new com.aliyun.oss.ServiceException("微信退款失败 :" + msg);
+        }
+    }
+
+    /**
+     * 初始化证书
+     *
+     * @param properties properties
+     * @return SSLConnectionSocketFactory
+     * @throws com.aliyun.oss.ServiceException ServiceException
+     */
+    private static SSLConnectionSocketFactory initCert(WeChatProperties properties) {
+
+        File file = new File(properties.getCertPath());
+        log.info("证书路径 : {}", properties.getCertPath());
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            keyStore.load(inputStream, properties.getMchId().toCharArray());
+            SSLContext sslContext = SSLContexts.custom().loadKeyMaterial(keyStore, properties.getMchId().toCharArray()).build();
+            return new SSLConnectionSocketFactory(sslContext, new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        } catch (Exception e) {
+            log.error("微信证书初始化错误", e);
+            throw new com.aliyun.oss.ServiceException("微信证书初始化错误", e);
+        }
+
+    }
+
+    /**
+     * 提交xml方式请求
+     *
+     * @param url 请求地址
+     * @param xml 请求xml
+     * @return string
+     * @throws com.aliyun.oss.ServiceException ServiceException
+     */
+    private static String requestXml(String url, String xml) {
+
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity stringEntity = new StringEntity(xml, StandardCharsets.UTF_8);
+        stringEntity.setContentType("application/x-www-form-urlencoded");
+        httpPost.setEntity(stringEntity);
+        String responseContent;
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            httpPost.setConfig(REQUEST_CONFIG);
+            HttpEntity entity = response.getEntity();
+            responseContent = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("send http requestBase : {} error : ", httpPost, e);
+            throw new com.aliyun.oss.ServiceException("微信请求失败 : ", e);
+        }
+        return responseContent;
+    }
+
+    /**
+     * 提交xml方式请求
+     *
+     * @param url 请求地址
+     * @param xml 请求xml
+     * @return String
+     */
+    private static String requestSslXml(String url, String xml, SSLConnectionSocketFactory socketFactory) {
+
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity stringEntity = new StringEntity(xml, StandardCharsets.UTF_8);
+        stringEntity.setContentType("application/x-www-form-urlencoded");
+        httpPost.setEntity(stringEntity);
+        String responseContent;
+        try (CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(socketFactory).build();
+             CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            httpPost.setConfig(REQUEST_CONFIG);
+            HttpEntity entity = response.getEntity();
+            responseContent = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("send http requestBase : {} error : ", httpPost, e);
+            throw new com.aliyun.oss.ServiceException("微信请求失败 : ", e);
+        }
+        return responseContent;
+    }
+
+    /**
+     * 生成签名. 注意，若含有sign_type字段，必须和signType参数保持一致。
+     *
+     * @param data   待签名数据
+     * @param mchKey API密钥
+     * @return 签名
+     */
+    private static String generateSignature(Map<String, String> data, String mchKey) {
+
+        StringBuilder signSb = new StringBuilder();
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            signSb.append(entry.getKey()).append('=').append(entry.getValue()).append('&');
+        }
+        String signStr = signSb.append("key=").append(mchKey).toString();
+        log.info("signSb: {}", signStr);
+        return DigestUtils.md5Hex(signStr).toUpperCase();
     }
 
     /**
@@ -277,29 +695,15 @@ public class WxPayUtil {
         return ip;
     }
 
-    public static List<String> sendRequestXml(String urlStr, String xmlStr) {
+    public static void main(String[] args) {
 
-        List<String> result = new ArrayList<>();
-        try {
-            URL url = new URL(urlStr);
-            URLConnection con = url.openConnection();
-            con.setDoOutput(true);
-            con.setRequestProperty("Pragma", "no-cache");
-            con.setRequestProperty("Cache-Control", "no-cache");
-            con.setRequestProperty("Content-Type", "text/xml");
-            OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
-            out.write(new String(xmlStr.getBytes(StandardCharsets.UTF_8)));
-            out.flush();
-            out.close();
-            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                result.add(line);
-            }
-            br.close();
-        } catch (Exception ex) {
-            log.error("账单下载报错  ", ex);
-        }
-        return result;
+        WeChatProperties properties = new WeChatProperties();
+        properties.setCertPath("/Users/yangqi/Downloads/cert/apiclient_cert.p12");
+        properties.setAppId("wx06a57803db0fa5ca")
+                .setAppSecret("32a7ceb71d3f9fda23b051e0a4a95828")
+                .setMchKey("554025ebae4d4ffca8904fb1681d5170")
+                .setMchId("1534364321");
+
+        Map<String, String> queryOrder = queryRefundOrder(properties, "T1911132321075445LK38152");
     }
 }
