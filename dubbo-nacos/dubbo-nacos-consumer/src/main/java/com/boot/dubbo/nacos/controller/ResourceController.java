@@ -1,9 +1,9 @@
 package com.boot.dubbo.nacos.controller;
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.boot.dubbo.api.api.IResourceService;
 import com.boot.dubbo.api.entity.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

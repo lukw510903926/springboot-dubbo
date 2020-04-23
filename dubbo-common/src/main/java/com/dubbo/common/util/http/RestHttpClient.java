@@ -1,8 +1,6 @@
 package com.dubbo.common.util.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import com.alibaba.fastjson.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version V1.0
@@ -22,16 +22,16 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class RestHttpClient {
 
-    private static RestTemplate restTemplate = new RestTemplate();
+    private static final RestTemplate RESTTEMPLATE = new RestTemplate();
 
     private RestHttpClient() {
     }
 
     static {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(15000);
-        requestFactory.setReadTimeout(10000);
-        restTemplate.setRequestFactory(requestFactory);
+        requestFactory.setConnectTimeout(3000);
+        requestFactory.setReadTimeout(3000);
+        RESTTEMPLATE.setRequestFactory(requestFactory);
     }
 
     public static String get(String url) {
@@ -47,7 +47,7 @@ public class RestHttpClient {
      */
     public static <V> V get(String url, Class<V> resultType) {
 
-        return restTemplate.getForObject(url, resultType);
+        return RESTTEMPLATE.getForObject(url, resultType);
     }
 
     /**
@@ -60,7 +60,7 @@ public class RestHttpClient {
     public static <V> V get(String url, Class<V> resultType, Map<String, String> header) {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(header(header, MediaType.APPLICATION_JSON_UTF8));
-        return restTemplate.exchange(url, HttpMethod.GET, requestEntity, resultType).getBody();
+        return RESTTEMPLATE.exchange(url, HttpMethod.GET, requestEntity, resultType).getBody();
     }
 
     public static String post(String url, Object param) {
@@ -95,7 +95,7 @@ public class RestHttpClient {
     public static <V> V post(String url, Object param, Class<V> resultType, Map<String, String> header) {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(param), header(header, MediaType.APPLICATION_JSON_UTF8));
-        return restTemplate.postForObject(url, requestEntity, resultType);
+        return RESTTEMPLATE.postForObject(url, requestEntity, resultType);
     }
 
     /**
@@ -136,7 +136,7 @@ public class RestHttpClient {
     public static <V> V postForm(String url, MultiValueMap<String, Object> param, Class<V> resultType, Map<String, String> header) {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(param, header(header, MediaType.MULTIPART_FORM_DATA));
-        return restTemplate.postForObject(url, requestEntity, resultType);
+        return RESTTEMPLATE.postForObject(url, requestEntity, resultType);
     }
 
     private static HttpHeaders header(Map<String, String> header, MediaType contentType) {

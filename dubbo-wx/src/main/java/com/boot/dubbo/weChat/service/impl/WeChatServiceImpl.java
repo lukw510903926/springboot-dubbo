@@ -8,9 +8,10 @@ import com.boot.dubbo.weChat.service.IProductService;
 import com.boot.dubbo.weChat.service.WeChatService;
 import com.dubbo.common.util.IdUtil;
 import com.dubbo.common.util.exception.ServiceException;
-import com.dubbo.common.util.weChat.WeChatProperties;
-import com.dubbo.common.util.weChat.WeChatUser;
-import com.dubbo.common.util.weChat.WxPayUtil;
+import com.dubbo.common.util.wechat.WeChatOrder;
+import com.dubbo.common.util.wechat.WeChatProperties;
+import com.dubbo.common.util.wechat.WeChatUser;
+import com.dubbo.common.util.wechat.WxPayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * <p>
@@ -45,14 +49,13 @@ public class WeChatServiceImpl implements WeChatService {
     private static final String SUCCESS = "SUCCESS";
 
     /**
-     * 微信账单下载
-     */
-    private static final String DOWN_LOAD_BILL_URL = "https://api.mch.weixin.qq.com/pay/downloadbill";
-
-    /**
      * 微信创建订单
      */
     private static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+    private static final String RETURN_CODE = "return_code";
+
+    private static final String RESULT_CODE = "result_code";
 
     /**
      * 微信支付回调
@@ -72,7 +75,7 @@ public class WeChatServiceImpl implements WeChatService {
             //xml转map
             Map<String, String> map = WxPayUtil.xmlToMap(xml);
             //判断订单状态
-            if (!SUCCESS.equals(map.get("return_code")) || !SUCCESS.equals(map.get("result_code"))) {
+            if (!SUCCESS.equals(map.get(RETURN_CODE)) || !SUCCESS.equals(map.get(RESULT_CODE))) {
                 throw new ServiceException("支付返回数据异常：" + map.toString());
             }
             //校验sign
@@ -105,8 +108,27 @@ public class WeChatServiceImpl implements WeChatService {
             this.orderService.updateById(order);
             return order;
         } catch (Exception e) {
-            log.error("支付回调失败 : {}",e);
+            log.error("支付回调失败 : ", e);
             throw new ServiceException("支付回调失败 ");
+        }
+    }
+
+
+    @Override
+    public void refund(String orderNo) {
+
+        if (StringUtils.isEmpty(orderNo)) {
+            throw new ServiceException("订单不存在");
+        }
+        WeChatOrder weChatOrder = new WeChatOrder();
+        weChatOrder.setOutTradeNo(orderNo);
+        Map<String, String> resultMap = WxPayUtil.refund(weChatProperties, weChatOrder);
+        //返回结果转换
+        log.info("创建支付返回数据 resultMap ：{}", resultMap.toString());
+        if (SUCCESS.equals(resultMap.get(RETURN_CODE)) && SUCCESS.equals(resultMap.get(RESULT_CODE))) {
+            log.info("resultMap : {}", resultMap);
+        } else {
+            throw new ServiceException("错误接口返回：" + resultMap.toString());
         }
     }
 
@@ -154,7 +176,7 @@ public class WeChatServiceImpl implements WeChatService {
         Map<String, String> resultMap = WxPayUtil.xmlToMap(resultXml);
         log.info("创建支付请求数据：" + xml);
         log.info("创建支付返回数据：" + resultMap.toString());
-        if (SUCCESS.equals(resultMap.get("return_code")) && SUCCESS.equals(resultMap.get("result_code"))) {
+        if (SUCCESS.equals(resultMap.get(RETURN_CODE)) && SUCCESS.equals(resultMap.get(RESULT_CODE))) {
             Map<String, String> params = new TreeMap<>();
             params.put("appId", resultMap.get("appid"));
             params.put("timeStamp", WxPayUtil.getCurrentTimestamp());
@@ -185,22 +207,11 @@ public class WeChatServiceImpl implements WeChatService {
     @Override
     public void download(String billDate) {
 
-        Map<String, String> data = new TreeMap<>();
-        data.put("appid", weChatProperties.getAppId());
-        data.put("mch_id", weChatProperties.getMchId());
-        data.put("nonce_str", WxPayUtil.getNonceStr());
-        data.put("sign_type", "MD5");
-        data.put("bill_date", billDate);
-        //ALL，返回当日所有订单信息，默认值，SUCCESS，返回当日成功支付的订单 REFUND，返回当日退款订单，RECHARGE_REFUND，返回当日充值退款订单
-        data.put("bill_type", SUCCESS);
         try {
-            String sign = WxPayUtil.generateSignature(data, weChatProperties.getMchKey(), "MD5");
-            data.put("sign", sign);
-            String xml = WxPayUtil.mapToXml(data);
-            List<String> results = WxPayUtil.sendRequestXml(DOWN_LOAD_BILL_URL, xml);
+            String results = WxPayUtil.download(billDate, weChatProperties);
             log.info("result : {}", results);
         } catch (Exception ex) {
-            log.error("下载微信账单失败 {}", ex);
+            log.error("下载微信账单失败", ex);
             throw new ServiceException("下载微信账单失败");
         }
     }

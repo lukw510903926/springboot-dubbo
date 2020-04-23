@@ -1,18 +1,21 @@
 package com.boot.dubbo.mvc.excel;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.metadata.Sheet;
-import com.alibaba.excel.support.ExcelTypeEnum;
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSBuilder;
-import com.aliyun.oss.OSSClientBuilder;
-import com.dubbo.common.util.oss.OssUtil;
-
-import java.io.*;
+import com.alibaba.excel.read.builder.ExcelReaderBuilder;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 /**
  * <p>
@@ -22,52 +25,55 @@ import java.util.concurrent.ThreadLocalRandom;
  * @email 13507615840@163.com
  * @since 2019/4/1 21:29
  **/
+@Slf4j
 public class ExcelUtil {
 
-    private static OSS ossClient;
-
-    static {
-        OSSBuilder builder = new OSSClientBuilder();
-        ossClient = builder.build("oss-cn-hangzhou.aliyuncs.com", "LTAIKbzVDNNREHJj", "ZxQ5cpsdGbefqRJZuiokSabHRI5Db1");
-    }
-
     public static void main(String[] args) throws Exception {
-
-//        downloadFile();
-        uploadFile();
+        readMap();
+//        readExcel();
     }
 
 
-    static void downloadFile() {
-        InputStream oss2InputStream = OssUtil.getOSS2InputStream(ossClient, "ywwl-m3u8", "file/设备成本模板.xlsx");
-        System.out.println(oss2InputStream);
+    static void readMap() throws Exception {
+        String fileName = "/Users/yangqi/Downloads/执行结果1.xlsx";
+        FileInputStream inputStream = FileUtils.openInputStream(new File(fileName));
+        MapListener excelListener = new MapListener();
+        ExcelReaderBuilder readerBuilder = EasyExcel.read(inputStream, excelListener);
+        readerBuilder.sheet().doRead();
+        List<Map<Integer, String>> list = excelListener.getList();
+        System.out.println(JSON.toJSONString(list));
+        list.forEach(entity -> {
+            StringBuilder builder = new StringBuilder("update integral_account set used_integral = used_integral - ");
+            builder.append(entity.get(2)).append(" where id = ").append(entity.get(0)).append(" ; ");
+            System.out.println(builder);
+        });
+    }
+
+    static void readExcel() throws Exception {
+        String fileName = "/Users/yangqi/Desktop/2019-08-10_data.xlsx";
+        FileInputStream inputStream = FileUtils.openInputStream(new File(fileName));
+        ExcelListener excelListener = new ExcelListener();
+        EasyExcel.read(inputStream, Student.class, excelListener).sheet().doRead();
+        List<Student> data = excelListener.getData();
+        System.out.println(JSON.toJSONString(data));
     }
 
     private static void uploadFile() throws Exception {
 
         List<Student> list = new ArrayList<>();
-
         for (int i = 0; i < 100; i++) {
             Student student = new Student();
-            student.setName("name" + ThreadLocalRandom.current().nextInt(1000)).setBirthday(new Date());
+            student.setAge(i);
+            student.setName("name" + ThreadLocalRandom.current().nextInt(1000));
+            student.setBirthday(new Date());
             list.add(student);
         }
-        File file = File.createTempFile("789", "xlsx");
-        try (
-                FileOutputStream out = new FileOutputStream(file)) {
-            ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
-            //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
-            Sheet sheet1 = new Sheet(1, 0, Student.class);
-            writer.write(list, sheet1);
-            writer.finish();
-            FileInputStream fileInputStream = new FileInputStream(file);
-            OssUtil.uploadObject2OSS(ossClient, fileInputStream, "ywwl-m3u8", "file/789.xlsx");
-
-//            https://ywwl-m3u8.oss-cn-hangzhou.aliyuncs.com/file/789.xlsx
-//            https://bucketname.endpint/key
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        File file = new File("/Users/yangqi/Desktop/2019-08-10_data.xlsx");
+        FileOutputStream outputStream = new FileOutputStream(file);
+        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
+        writeSheet.setCustomWriteHandlerList(Lists.newArrayList(new StyleExcelHandler()));
+        ExcelWriter writer = EasyExcel.write(outputStream, Student.class).build();
+        writer.write(list, writeSheet);
+        writer.finish();
     }
 }

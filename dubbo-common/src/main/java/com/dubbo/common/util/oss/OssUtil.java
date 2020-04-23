@@ -5,9 +5,8 @@ import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -20,9 +19,8 @@ import java.io.InputStream;
  * @email yangqi@ywwl.com
  * @since 2018/10/17 14:37
  **/
+@Slf4j
 public class OssUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(OssUtil.class);
 
     /**
      * 新建Bucket --Bucket权限:私有
@@ -43,7 +41,7 @@ public class OssUtil {
     public static final void deleteBucket(OSS client, String bucketName) {
 
         client.deleteBucket(bucketName);
-        logger.info("删除" + bucketName + "Bucket成功");
+        log.info("删除" + bucketName + "Bucket成功");
     }
 
     /**
@@ -119,7 +117,7 @@ public class OssUtil {
 
         filePath = getFilePath(filePath);
         client.deleteObject(bucketName, filePath);
-        logger.info("删除" + bucketName + "下的文件" + filePath + "成功");
+        log.info("删除" + bucketName + "下的文件" + filePath + "成功");
     }
 
     /**
@@ -131,24 +129,33 @@ public class OssUtil {
     public static final String getContentType(String fileName) {
 
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        if ("bmp".equalsIgnoreCase(fileExtension))
+        if ("bmp".equalsIgnoreCase(fileExtension)) {
             return "image/bmp";
-        if ("gif".equalsIgnoreCase(fileExtension))
+        }
+        if ("gif".equalsIgnoreCase(fileExtension)) {
             return "image/gif";
-        if ("jpeg".equalsIgnoreCase(fileExtension) || "jpg".equalsIgnoreCase(fileExtension) || "png".equalsIgnoreCase(fileExtension))
+        }
+        if ("jpeg".equalsIgnoreCase(fileExtension) || "jpg".equalsIgnoreCase(fileExtension) || "png".equalsIgnoreCase(fileExtension)) {
             return "image/png";
-        if ("html".equalsIgnoreCase(fileExtension))
+        }
+        if ("html".equalsIgnoreCase(fileExtension)) {
             return "text/html";
-        if ("txt".equalsIgnoreCase(fileExtension))
+        }
+        if ("txt".equalsIgnoreCase(fileExtension)) {
             return "text/plain";
-        if ("vsd".equalsIgnoreCase(fileExtension))
+        }
+        if ("vsd".equalsIgnoreCase(fileExtension)) {
             return "application/vnd.visio";
-        if ("ppt".equalsIgnoreCase(fileExtension) || "pptx".equalsIgnoreCase(fileExtension))
+        }
+        if ("ppt".equalsIgnoreCase(fileExtension) || "pptx".equalsIgnoreCase(fileExtension)) {
             return "application/vnd.ms-powerpoint";
-        if ("doc".equalsIgnoreCase(fileExtension) || "docx".equalsIgnoreCase(fileExtension) || "pdf".equalsIgnoreCase(fileExtension))
+        }
+        if ("doc".equalsIgnoreCase(fileExtension) || "docx".equalsIgnoreCase(fileExtension) || "pdf".equalsIgnoreCase(fileExtension)) {
             return "application/msword";
-        if ("xml".equalsIgnoreCase(fileExtension))
+        }
+        if ("xml".equalsIgnoreCase(fileExtension)) {
             return "text/xml";
+        }
         return "application/msword";
     }
 
@@ -163,7 +170,6 @@ public class OssUtil {
         if (StringUtils.isNotBlank(filePath) && filePath.startsWith("/")) {
             filePath = filePath.substring(1);
         }
-        filePath.replace("//", "/");
-        return filePath;
+        return filePath.replace("//", "/");
     }
 }

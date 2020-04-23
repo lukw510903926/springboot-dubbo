@@ -17,26 +17,4 @@
         <module>dubbo-nacos-provider</module>
         <module>dubbo-nacos-consumer</module>
     </modules>
-    <dependencyManagement>
-        <dependencies>
-            <!-- Dubbo Nacos registry dependency -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>dubbo-registry-nacos</artifactId>
-                <version>0.0.2</version>
-            </dependency>
-            <!-- Keep latest Nacos client version -->
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>0.7.0</version>
-            </dependency>
-            <!--配置中心-->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-                <version>0.2.0.RELEASE</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

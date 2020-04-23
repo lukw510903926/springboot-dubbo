@@ -1,0 +1,66 @@
+[2019-09-27 13:49:56.997][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[308]-Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.mvc.test.MailTest], using SpringBootContextLoader
+[2019-09-27 13:49:57.006][INFO ]org.springframework.test.context.support.AbstractContextLoader[264]-Could not detect default resource locations for test class [com.mvc.test.MailTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+[2019-09-27 13:49:57.273][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[248]-Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+[2019-09-27 13:49:57.337][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[177]-Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@6404f418, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@3e11f9e9, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@1de5f259, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@729d991e, org.springframework.test.context.support.DirtiesContextTestExecutionListener@31fa1761, org.springframework.test.context.transaction.TransactionalTestExecutionListener@957e06, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@32502377, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@2c1b194a, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@4dbb42b7, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@66f57048, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@550dbc7a, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@21282ed8]
+[2019-09-27 13:50:13.032][WARN ]o.s.b.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer[86]-
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/Users/yangqi/environment/apache-maven-store/org/json/json/20170516/json-20170516.jar!/org/json/JSONObject.class
+	jar:file:/Users/yangqi/environment/apache-maven-store/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+[2019-09-27 13:50:23.067][INFO ]com.mvc.test.MailTest[50]-Starting MailTest on yangqideMacBook-Pro.local with PID 8510 (started by yangqi in /Users/yangqi/lukew/java/springboot-dubbo/boot-mvc)
+[2019-09-27 13:50:23.069][INFO ]com.mvc.test.MailTest[675]-No active profile set, falling back to default profiles: default
+[2019-09-27 13:50:24.240][INFO ]org.springframework.data.repository.config.RepositoryConfigurationDelegate[244]-Multiple Spring Data modules found, entering strict repository configuration mode!
+[2019-09-27 13:50:24.246][INFO ]org.springframework.data.repository.config.RepositoryConfigurationDelegate[126]-Bootstrapping Spring Data repositories in DEFAULT mode.
+[2019-09-27 13:50:24.329][INFO ]org.springframework.data.repository.config.RepositoryConfigurationDelegate[182]-Finished Spring Data repository scanning in 50ms. Found 0 repository interfaces.
+[2019-09-27 13:50:25.175][INFO ]org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker[330]-Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$e9dbe6c6] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2019-09-27 13:50:27.486][INFO ]com.zaxxer.hikari.HikariDataSource[110]-HikariPool-1 - Starting...
+[2019-09-27 13:50:28.004][INFO ]com.zaxxer.hikari.HikariDataSource[123]-HikariPool-1 - Start completed.
+[2019-09-27 13:50:29.729][INFO ]org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor[171]-Initializing ExecutorService 'applicationTaskExecutor'
+[2019-09-27 13:50:30.112][WARN ]org.thymeleaf.templatemode.TemplateMode[150]-[THYMELEAF][main] Template Mode 'LEGACYHTML5' is deprecated. Using Template Mode 'HTML' instead.
+[2019-09-27 13:50:31.327][INFO ]io.lettuce.core.EpollProvider[68]-Starting without optional epoll library
+[2019-09-27 13:50:31.379][INFO ]io.lettuce.core.KqueueProvider[66]-Starting with kqueue library
+[2019-09-27 13:50:36.148][INFO ]com.mvc.test.MailTest[59]-Started MailTest in 38.741 seconds (JVM running for 40.188)
+[2019-09-27 13:50:36.153][INFO ]com.boot.dubbo.mvc.config.StartUpRunner[24]-springboot启动后执行此方法
+[2019-09-27 13:50:37.166][ERROR]org.springframework.data.redis.listener.RedisMessageListenerContainer[656]-SubscriptionTask aborted with exception:
+org.springframework.data.redis.connection.PoolException: Could not get a resource from the pool; nested exception is io.lettuce.core.RedisConnectionException: Unable to connect to 127.0.0.1:6379
+	at org.springframework.data.redis.connection.lettuce.LettucePoolingConnectionProvider.getConnection(LettucePoolingConnectionProvider.java:86)
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$SharedConnection.getNativeConnection(LettuceConnectionFactory.java:1085)
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$SharedConnection.getConnection(LettuceConnectionFactory.java:1065)
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.getSharedConnection(LettuceConnectionFactory.java:865)
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.getConnection(LettuceConnectionFactory.java:340)
+	at org.springframework.data.redis.listener.RedisMessageListenerContainer$SubscriptionTask.run(RedisMessageListenerContainer.java:738)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: io.lettuce.core.RedisConnectionException: Unable to connect to 127.0.0.1:6379
+	at io.lettuce.core.RedisConnectionException.create(RedisConnectionException.java:78)
+	at io.lettuce.core.RedisConnectionException.create(RedisConnectionException.java:56)
+	at io.lettuce.core.AbstractRedisClient.getConnection(AbstractRedisClient.java:234)
+	at io.lettuce.core.RedisClient.connect(RedisClient.java:204)
+	at org.springframework.data.redis.connection.lettuce.StandaloneConnectionProvider.lambda$getConnection$1(StandaloneConnectionProvider.java:113)
+	at java.util.Optional.orElseGet(Optional.java:267)
+	at org.springframework.data.redis.connection.lettuce.StandaloneConnectionProvider.getConnection(StandaloneConnectionProvider.java:113)
+	at org.springframework.data.redis.connection.lettuce.LettucePoolingConnectionProvider.lambda$null$0(LettucePoolingConnectionProvider.java:74)
+	at io.lettuce.core.support.ConnectionPoolSupport$RedisPooledObjectFactory.create(ConnectionPoolSupport.java:209)
+	at io.lettuce.core.support.ConnectionPoolSupport$RedisPooledObjectFactory.create(ConnectionPoolSupport.java:199)
+	at org.apache.commons.pool2.BasePooledObjectFactory.makeObject(BasePooledObjectFactory.java:58)
+	at org.apache.commons.pool2.impl.GenericObjectPool.create(GenericObjectPool.java:883)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:436)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:365)
+	at io.lettuce.core.support.ConnectionPoolSupport$1.borrowObject(ConnectionPoolSupport.java:122)
+	at io.lettuce.core.support.ConnectionPoolSupport$1.borrowObject(ConnectionPoolSupport.java:117)
+	at org.springframework.data.redis.connection.lettuce.LettucePoolingConnectionProvider.getConnection(LettucePoolingConnectionProvider.java:80)
+	... 6 common frames omitted
+Caused by: io.netty.channel.AbstractChannel$AnnotatedConnectException: syscall:getsockopt(..) failed: Connection refused: /127.0.0.1:6379
+	at io.netty.channel.unix.Socket.finishConnect(..)(Unknown Source)
+Caused by: io.netty.channel.unix.Errors$NativeConnectException: syscall:getsockopt(..) failed: Connection refused
+	... 1 common frames omitted
+[2019-09-27 13:50:38.466][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[308]-Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.mvc.test.DubboApplicationTest], using SpringBootContextLoader
+[2019-09-27 13:50:38.467][INFO ]org.springframework.test.context.support.AbstractContextLoader[264]-Could not detect default resource locations for test class [com.mvc.test.DubboApplicationTest]: no resource found for suffixes {-context.xml, Context.groovy}.
+[2019-09-27 13:50:38.547][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[248]-Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+[2019-09-27 13:50:38.547][INFO ]org.springframework.boot.test.context.SpringBootTestContextBootstrapper[177]-Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@9e33a6a, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@c497a55, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@7493d937, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@5dc7841c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@4d67d5a4, org.springframework.test.context.transaction.TransactionalTestExecutionListener@a3b858f, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@600bbf9e, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@18d30e7, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@72b40f87, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@2475fba3, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@19bf47fc, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@71dd4624]
+[2019-09-27 13:50:38.621][INFO ]org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor[208]-Shutting down ExecutorService 'applicationTaskExecutor'
+[2019-09-27 13:50:38.624][INFO ]com.zaxxer.hikari.HikariDataSource[350]-HikariPool-1 - Shutdown initiated...
+[2019-09-27 13:50:38.634][INFO ]com.zaxxer.hikari.HikariDataSource[352]-HikariPool-1 - Shutdown completed.

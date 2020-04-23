@@ -1,2 +1,9 @@
-# Created by .ignore support plugin (hsz.mobi)
-.idea/
+.idea
+*/target
+.iml
+*/*.iml
+*/*/target
+*.iml
+/*.log
+logs/*.log
+boot-es/

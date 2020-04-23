@@ -1,0 +1,7 @@
+app.id: ec-demo
+apollo:
+  cacheDir: ./config
+  meta: http://10.10.10.65:8080
+  bootstrap:
+    enabled: true
+    eagerLoad.enabled: true
