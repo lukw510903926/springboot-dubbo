@@ -320,7 +320,7 @@ public class WxPayUtil {
         data.put("sign_type", "MD5");
         data.put("bill_date", billDate);
         //ALL，返回当日所有订单信息，默认值，SUCCESS，返回当日成功支付的订单 REFUND，返回当日退款订单，RECHARGE_REFUND，返回当日充值退款订单
-        data.put("bill_type", SUCCESS);
+        data.put("bill_type", "ALL");
         try {
             String sign = generateSignature(data, weChatProperties.getMchKey());
             data.put(SIGN_KEY, sign);
@@ -331,7 +331,7 @@ public class WxPayUtil {
             return results;
         } catch (Exception ex) {
             log.error("下载微信账单失败", ex);
-            throw new com.aliyun.oss.ServiceException("下载微信账单失败");
+            throw new ServiceException("下载微信账单失败");
         }
     }
 
@@ -341,9 +341,8 @@ public class WxPayUtil {
      * @param weChatProperties weChatProperties
      * @param weChatOrder      weChatOrder
      * @return String
-     * @throws com.aliyun.oss.ServiceException ServiceException
      */
-    public static String refund(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
+    public static Map<String, String> refund(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
 
         Map<String, String> data = new TreeMap<>();
         data.put("appid", weChatProperties.getAppId());
@@ -360,18 +359,7 @@ public class WxPayUtil {
         SSLConnectionSocketFactory socketFactory = initCert(weChatProperties);
         String resultXml = requestSslXml(REFUND_URL, xml, socketFactory);
         log.info("resultXml : {}", resultXml);
-
-        //返回结果转换
-        Map<String, String> result = xmlToMap(resultXml);
-        log.info("创建退款返回数据：{}", result.toString());
-        if (SUCCESS.equals(result.get(RETURN_CODE)) && SUCCESS.equals(result.get(RESULT_CODE))) {
-            log.info("resultMap : {}", result);
-            return result.get("transaction_id");
-        } else {
-            log.error("weChat refund fail result : {}", result.toString());
-            String msg = org.apache.commons.lang.StringUtils.isEmpty(result.get("err_code_des")) ? result.get("return_msg") : result.get("err_code_des");
-            throw new com.aliyun.oss.ServiceException("微信退款失败 :" + msg);
-        }
+        return xmlToMap(resultXml);
     }
 
     /**
@@ -379,7 +367,6 @@ public class WxPayUtil {
      *
      * @param properties properties
      * @return SSLConnectionSocketFactory
-     * @throws com.aliyun.oss.ServiceException ServiceException
      */
     private static SSLConnectionSocketFactory initCert(WeChatProperties properties) {
 

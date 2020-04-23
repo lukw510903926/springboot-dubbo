@@ -122,10 +122,9 @@ public class WeChatServiceImpl implements WeChatService {
         }
         WeChatOrder weChatOrder = new WeChatOrder();
         weChatOrder.setOutTradeNo(orderNo);
-        String resultXml = WxPayUtil.refund(weChatProperties, weChatOrder);
+        Map<String, String> resultMap = WxPayUtil.refund(weChatProperties, weChatOrder);
         //返回结果转换
-        Map<String, String> resultMap = WxPayUtil.xmlToMap(resultXml);
-        log.info("创建支付返回数据：" + resultMap.toString());
+        log.info("创建支付返回数据 resultMap ：{}", resultMap.toString());
         if (SUCCESS.equals(resultMap.get(RETURN_CODE)) && SUCCESS.equals(resultMap.get(RESULT_CODE))) {
             log.info("resultMap : {}", resultMap);
         } else {
