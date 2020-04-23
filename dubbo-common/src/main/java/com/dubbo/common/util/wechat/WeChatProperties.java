@@ -1,4 +1,4 @@
-package com.dubbo.common.util.weChat;
+package com.dubbo.common.util.wechat;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

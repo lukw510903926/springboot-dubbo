@@ -1,7 +1,7 @@
 package com.boot.dubbo.weChat.service;
 
 import com.boot.dubbo.weChat.entity.Order;
-import com.dubbo.common.util.weChat.WeChatUser;
+import com.dubbo.common.util.wechat.WeChatUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.boot.dubbo.nacos.config;
 
-import com.dubbo.common.util.weChat.WeChatProperties;
+import com.dubbo.common.util.wechat.WeChatProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * <p>
  * 从nacos 配置中心读取配置文件
+ *
  * @author yangqi
  * @Description </p>
  * @email yangqi@ywwl.com
@@ -18,8 +19,8 @@ public class NacosConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "we.chat")
-    public WeChatProperties weChatProperties(){
+    public WeChatProperties weChatProperties() {
 
-        return  new WeChatProperties();
+        return new WeChatProperties();
     }
 }

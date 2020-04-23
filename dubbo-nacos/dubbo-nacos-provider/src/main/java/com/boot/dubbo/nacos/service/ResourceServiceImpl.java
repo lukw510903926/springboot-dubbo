@@ -3,7 +3,7 @@ package com.boot.dubbo.nacos.service;
 import com.alibaba.fastjson.JSONObject;
 import com.boot.dubbo.api.api.IResourceService;
 import com.boot.dubbo.api.entity.Resource;
-import com.dubbo.common.util.weChat.WeChatProperties;
+import com.dubbo.common.util.wechat.WeChatProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;

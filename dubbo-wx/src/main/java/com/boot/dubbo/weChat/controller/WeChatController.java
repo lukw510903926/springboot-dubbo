@@ -2,7 +2,7 @@ package com.boot.dubbo.weChat.controller;
 
 
 import com.boot.dubbo.weChat.service.WeChatService;
-import com.dubbo.common.util.weChat.WeChatUser;
+import com.dubbo.common.util.wechat.WeChatUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -1,4 +1,4 @@
-package com.dubbo.common.util.weChat;
+package com.dubbo.common.util.wechat;
 
 import com.alibaba.fastjson.JSON;
 import com.dubbo.common.util.exception.ServiceException;
