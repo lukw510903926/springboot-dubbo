@@ -1,6 +1,6 @@
 package com.dubbo.common.util.alibaba;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -95,7 +95,7 @@ public class AliPayUtil {
         String url;
         try {
             AlipayDataDataserviceBillDownloadurlQueryRequest request = new AlipayDataDataserviceBillDownloadurlQueryRequest();
-            request.setBizContent(JSONObject.toJSONString(content));
+            request.setBizContent(JSON.toJSONString(content));
             AlipayDataDataserviceBillDownloadurlQueryResponse response = alipayClient.execute(request);
             if (!response.isSuccess()) {
                 logger.error("AliPayUtil billDownload invoke error");
@@ -165,7 +165,7 @@ public class AliPayUtil {
             AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
             Map<String, Object> content = new HashMap<>();
             content.put("out_trade_no", orderId);
-            request.setBizContent(JSONObject.toJSONString(content));
+            request.setBizContent(JSON.toJSONString(content));
             AlipayTradeQueryResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
                 logger.info("AliPayUtil queryTradeWithOrderId invoke success");
@@ -183,13 +183,13 @@ public class AliPayUtil {
 
         String src = "测试测试";
         String signResult = AlipaySignature.rsa256Sign(src, APP_PRIVATE_KEY, DEFAULT_CHARSET);
-        logger.info("result : {}",AlipaySignature.rsa256CheckContent(src, signResult, APP_PUBLIC_KEY, DEFAULT_CHARSET));
-        AlipayClient testClient = new DefaultAlipayClient(API_URL, "2018111262101925", APP_PRIVATE_KEY, "json", DEFAULT_CHARSET, ALI_PAY_PUBLIC_KEY, "RSA2");
+        logger.info("result : {}", AlipaySignature.rsa256CheckContent(src, signResult, APP_PUBLIC_KEY, DEFAULT_CHARSET));
+        AlipayClient testClient = new DefaultAlipayClient(API_URL, "appId", APP_PRIVATE_KEY, "json", DEFAULT_CHARSET, ALI_PAY_PUBLIC_KEY, "RSA2");
         String orderId = "ee0a227881ed456081b247d42c6d7491";
         AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
         Map<String, Object> content = new HashMap<>();
         content.put("out_trade_no", orderId);
-        request.setBizContent(JSONObject.toJSONString(content));
+        request.setBizContent(JSON.toJSONString(content));
         AlipayTradeQueryResponse response = testClient.execute(request);
         if (response.isSuccess()) {
             logger.info("AliPayUtil queryTradeWithOrderId invoke success");
