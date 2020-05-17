@@ -22,6 +22,11 @@ public class NormalOrderPaySuccess extends AbstractOrderPaySuccessHandler {
     }
 
     @Override
+    public void handlePlatform(UserOrderDTO userOrderDTO) {
+        super.handlePlatform(userOrderDTO);
+    }
+
+    @Override
     public String getHandlerName() {
         return OrderHandlerEnum.NORMAL_ORDER.name();
     }
