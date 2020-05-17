@@ -205,5 +205,6 @@
         <module>boot-apollo</module>
         <module>boot-finance</module>
         <module>boot-gateway</module>
+        <module>boot-elasticsearch</module>
     </modules>
 </project>
