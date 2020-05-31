@@ -2,6 +2,7 @@ package com.boot.dubbo.elasticsearch.controller;
 
 import com.boot.dubbo.elasticsearch.index.Person;
 import com.boot.dubbo.elasticsearch.service.PersonService;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,9 @@ public class PersonController {
     private PersonService personService;
 
     private final AtomicLong atomicInteger = new AtomicLong(20);
+
+    @Resource
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
 
     @GetMapping("/es/add")
     public Person add() {
@@ -48,5 +52,12 @@ public class PersonController {
 
         this.personService.deleteAll();
         return "SUCCESS";
+    }
+
+    @GetMapping("/es/create/index")
+    public String createIndex(String index) {
+
+        boolean result = this.elasticsearchRestTemplate.createIndex(index);
+        return index + " : " + result;
     }
 }
