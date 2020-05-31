@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @since : 2020-05-17 22:37
  */
 @Data
-@Document(indexName = "t_person_doc", type = "personDocument")
+@Document(indexName = "t_person_index", type = "t_person_document")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 7631727984669080957L;

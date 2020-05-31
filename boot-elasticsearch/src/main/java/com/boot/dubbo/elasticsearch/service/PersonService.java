@@ -32,4 +32,8 @@ public class PersonService {
         all.forEach(list::add);
         return list;
     }
+
+    public void deleteAll() {
+        this.personRepository.deleteAll();
+    }
 }
