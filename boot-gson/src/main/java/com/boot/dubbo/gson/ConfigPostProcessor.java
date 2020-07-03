@@ -17,11 +17,7 @@ public class ConfigPostProcessor implements BeanPostProcessor {
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 
         Field[] fields = bean.getClass().getDeclaredFields();
-        if(beanName.equals("personConfig")){
-            System.out.println(beanName);
-        }
         for (Field field : fields) {
-            field.setAccessible(true);
             ApolloValue annotation = field.getAnnotation(ApolloValue.class);
             if(annotation == null){
                 continue;
