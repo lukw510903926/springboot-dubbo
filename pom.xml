@@ -152,11 +152,6 @@
                 <version>1.1.4</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-                <version>2.1.1.RELEASE</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>28.1-jre</version>
@@ -172,10 +167,6 @@
                         <artifactId>guava</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.ctrip.framework.apollo</groupId>
-                <artifactId>apollo-client</artifactId>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -202,7 +193,6 @@
         <module>dubbo-wx</module>
         <module>dubbo-nacos</module>
         <module>boot-gson</module>
-        <module>boot-apollo</module>
         <module>boot-finance</module>
         <module>boot-gateway</module>
         <module>boot-elasticsearch</module>

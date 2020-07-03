@@ -2,6 +2,8 @@ package com.boot.dubbo.finance.pay;
 
 import com.boot.dubbo.finance.constants.OrderHandlerEnum;
 import com.boot.dubbo.finance.dto.UserOrderDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * @author : yangqi
@@ -9,6 +11,8 @@ import com.boot.dubbo.finance.dto.UserOrderDTO;
  * @description :
  * @since : 2020-01-12 18:22
  */
+@Slf4j
+@Component
 public class BrandOrderPaySuccess extends AbstractOrderPaySuccessHandler {
 
     @Override

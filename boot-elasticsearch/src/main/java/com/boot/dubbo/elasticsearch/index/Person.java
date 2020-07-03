@@ -1,10 +1,10 @@
 package com.boot.dubbo.elasticsearch.index;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author : yangqi
@@ -13,13 +13,15 @@ import java.util.Date;
  * @since : 2020-05-17 22:37
  */
 @Data
-@Document(indexName = "t_person")
+@Document(indexName = "t_person_index", type = "t_person_document")
 public class Person implements Serializable {
 
     private static final long serialVersionUID = 7631727984669080957L;
-    private String name;
 
-    private Date date;
+    @Id
+    private Long id;
+
+    private String name;
 
     private String city;
 
