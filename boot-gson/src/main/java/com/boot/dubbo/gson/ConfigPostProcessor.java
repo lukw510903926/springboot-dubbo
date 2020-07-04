@@ -8,10 +8,16 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author : yangqi
+ * @email : lukewei@mockuai.com
+ * @description :
+ * @since : 2020/7/4 9:43 上午
+ */
 @Component
 public class ConfigPostProcessor implements BeanPostProcessor {
 
-    public static final Map<String,ConfigBean> CONFIG_BEAN_MAP = new ConcurrentHashMap<>();
+    public static final Map<String, ConfigBean> CONFIG_BEAN_MAP = new ConcurrentHashMap<>();
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -19,12 +25,12 @@ public class ConfigPostProcessor implements BeanPostProcessor {
         Field[] fields = bean.getClass().getDeclaredFields();
         for (Field field : fields) {
             ApolloValue annotation = field.getAnnotation(ApolloValue.class);
-            if(annotation == null){
+            if (annotation == null) {
                 continue;
             }
             String key = annotation.key();
             ConfigBean configBean = ConfigBean.build(key, field, bean);
-            CONFIG_BEAN_MAP.put(key,configBean);
+            CONFIG_BEAN_MAP.put(key, configBean);
         }
         return bean;
     }
