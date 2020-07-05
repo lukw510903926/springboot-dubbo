@@ -22,4 +22,12 @@ public class ApplicationConfig {
         product.setUserName("ConditionalOnMissingBean");
         return product;
     }
+
+    @Bean
+    public PersonConfig personConfig(){
+
+        PersonConfig personConfig = new PersonConfig();
+        personConfig.setApolloValue("apolloValue");
+        return personConfig;
+    }
 }
