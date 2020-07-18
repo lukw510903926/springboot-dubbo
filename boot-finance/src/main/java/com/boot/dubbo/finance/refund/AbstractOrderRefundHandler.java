@@ -2,6 +2,10 @@ package com.boot.dubbo.finance.refund;
 
 import com.boot.dubbo.finance.dto.UserOrderDTO;
 import com.boot.dubbo.finance.pay.OrderHandlerContext;
+import com.boot.dubbo.finance.refund.command.DepositAccountRefundCommand;
+import com.boot.dubbo.finance.refund.command.FinanceAccountRefundCommand;
+import com.boot.dubbo.finance.refund.command.OweAccountRefundCommand;
+import com.boot.dubbo.finance.refund.command.RefundDTO;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -31,6 +35,13 @@ public abstract class AbstractOrderRefundHandler implements InitializingBean {
 
     public void handleSeller(UserOrderDTO userOrderDTO) {
 
+        FinanceAccountRefundCommand financeAccountRefundCommand = new FinanceAccountRefundCommand();
+        DepositAccountRefundCommand depositAccountRefundCommand = new DepositAccountRefundCommand();
+        OweAccountRefundCommand oweAccountRefundCommand = new OweAccountRefundCommand();
+        financeAccountRefundCommand.setNextCommand(depositAccountRefundCommand);
+        depositAccountRefundCommand.setNextCommand(oweAccountRefundCommand);
+
+        financeAccountRefundCommand.execute(new RefundDTO());
     }
 
     public void handlePlatform(UserOrderDTO userOrderDTO) {
