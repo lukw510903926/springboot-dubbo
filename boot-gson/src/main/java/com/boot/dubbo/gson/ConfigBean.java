@@ -11,13 +11,13 @@ public class ConfigBean {
 
     private Field field;
 
-    private Object bean ;
+    private Object bean;
 
-    public static ConfigBean build(String key,Field field ,Object bean){
+    public static ConfigBean build(String key, Field field, Object bean) {
         ConfigBean configBean = new ConfigBean();
-      configBean.setBean(bean);
-      configBean.setField(field);
-      configBean.setKey(key);
-      return configBean;
+        configBean.setBean(bean);
+        configBean.setField(field);
+        configBean.setKey(key);
+        return configBean;
     }
 }
