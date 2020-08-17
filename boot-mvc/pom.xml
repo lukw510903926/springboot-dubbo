@@ -83,6 +83,10 @@
             <artifactId>guava</artifactId>
             <version>28.1-jre</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
