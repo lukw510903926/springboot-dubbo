@@ -1,0 +1,21 @@
+spring:
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    consumer:
+      group-id: test
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+
+    properties:
+      schema.registry.url: http://mk-falcon-cp-schema-registry:8081
+      security.protocol: SASL_PLAINTEXT
+      sasl:
+        mechanism: PLAIN
+        jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="" password="";
+    template:
+      default-topic: test
+    listener:
+      missing-topics-fatal: false
