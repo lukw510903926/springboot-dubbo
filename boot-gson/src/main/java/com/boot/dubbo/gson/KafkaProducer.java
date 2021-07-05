@@ -22,7 +22,7 @@ public class KafkaProducer {
 
     @GetMapping("/kafka/normal/{message}")
     public String sendMessage1(@PathVariable("message") String normalMessage) {
-        kafkaTemplate.send("test", UUID.randomUUID().toString(), normalMessage);
+        kafkaTemplate.send("finance_db.finance_db.finance_withdraw_record", UUID.randomUUID().toString(), normalMessage);
         return normalMessage;
     }
 
