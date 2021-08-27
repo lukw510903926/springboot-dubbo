@@ -6,6 +6,7 @@ import com.alibaba.excel.read.builder.ExcelReaderBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -29,12 +30,18 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class ExcelUtil {
 
+    private static Map<String,String> map = Maps.newConcurrentMap();
+    static {
+        map.put("借","1");
+        map.put("贷","2");
+    }
+
     public static void main(String[] args) throws Exception {
         readAccf();
     }
 
     static void readAccf() throws Exception {
-        String fileName = "/Users/lukewei/Desktop/会计分录/快手对接2.0.xlsx";
+        String fileName = "/Users/lukewei/Desktop/会计分录/店铺保证金.xlsx";
         FileInputStream inputStream = FileUtils.openInputStream(new File(fileName));
         MapListener excelListener = new MapListener();
         ExcelReaderBuilder readerBuilder = EasyExcel.read(inputStream, excelListener);
@@ -44,8 +51,9 @@ public class ExcelUtil {
         List<String> data = Lists.newArrayList();
         list.forEach(entity -> {
             StringBuilder builder = new StringBuilder("INSERT INTO `account_accf` (`biz_code`,`biz_name`,`tx_type`,`tx_name`,`bus_type`,`bus_name`,`ae_seq`,`dc_flag`,`accounting_code`,`accounting_name`,`account_no`,`account_type`,`in_out_flag`,`fund_type`,`remark`,`delete_mark`,`delete_timestamp`,`gmt_created`,`gmt_modified`)");
-            builder.append("\n").append(" VALUES ('10','魔筷星选',").append(entity.get(2)).append(",'").append(entity.get(3)).append("',").append(entity.get(4)).append(",'").append(entity.get(5)).append("',");
-            builder.append("1,1,null,null,null,").append(entity.get(10)).append(",0,null,'").append(entity.get(14)).append("',0,0,").append("now(),now());");
+            builder.append("\n").append(" VALUES ('10','魔筷星选',").append(entity.get(2)).append(",'").append(entity.get(3)).append("',").append(entity.get(4)).append(",'").append(entity.get(5)).append("',").append(entity.get(6)).append(",");
+            builder.append(map.get(entity.get(7))).append(",");
+            builder.append("null,null,null,").append(entity.get(10)).append(",").append(entity.get(11)).append(",null,'").append(entity.get(14)).append("',0,0,").append("now(),now());");
             System.out.println(builder);
             data.add(builder.toString());
         });
