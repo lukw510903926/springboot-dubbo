@@ -18,7 +18,7 @@
         <mysql.version>8.0.17</mysql.version>
         <mybatis.plus.version>3.3.0</mybatis.plus.version>
         <fastjson.version>1.2.58</fastjson.version>
-        <dubbo.version>2.7.5</dubbo.version>
+        <dubbo.version>2.7.13</dubbo.version>
         <project.version>2.0.0</project.version>
         <spring.cloud.alibaba>2.2.1.RELEASE</spring.cloud.alibaba>
     </properties>
