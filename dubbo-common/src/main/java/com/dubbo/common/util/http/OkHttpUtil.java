@@ -2,9 +2,11 @@ package com.dubbo.common.util.http;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dubbo.common.util.exception.ServiceException;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody.Builder;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -12,6 +14,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.io.IOUtils;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -129,9 +132,8 @@ public class OkHttpUtil {
      */
     public static void downLoadFile(String url, OutputStream outputStream) {
 
-        try {
-            Request request = createBuilder(url).get().build();
-            Response response = CLIENT.newCall(request).execute();
+        Request request = createBuilder(url).get().build();
+        try (Response response = CLIENT.newCall(request).execute()){
             ResponseBody body = response.body();
             if (body != null) {
                 IOUtils.copy(body.byteStream(), outputStream);
@@ -141,6 +143,31 @@ public class OkHttpUtil {
             throw new ServiceException("文件下载失败 ");
         }
     }
+
+
+    /**
+     * 文件上传
+     *
+     * @param url
+     * @param filePath
+     * @param fileName
+     * @param params
+     * @return
+     * @throws Exception
+     */
+    public static String uploadFile(String url, String filePath, String fileName, Map<String, String> params) {
+
+        Request.Builder builder = createBuilder(url);
+        header(builder, Maps.newHashMap());
+        RequestBody fileRequestBody = RequestBody.create(MultipartBody.FORM, new File(filePath));
+        MultipartBody.Builder requestBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", fileName, fileRequestBody);
+        params.forEach(requestBuilder::addFormDataPart);
+        MultipartBody requestBody = requestBuilder.build();
+        return execute(builder.url(url).post(requestBody).build());
+    }
+
 
     private static String execute(Request request) {
 
