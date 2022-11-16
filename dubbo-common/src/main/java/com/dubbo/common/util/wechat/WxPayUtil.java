@@ -1,6 +1,7 @@
 package com.dubbo.common.util.wechat;
 
 import com.alibaba.fastjson.JSON;
+import com.dubbo.common.util.IdUtil;
 import com.dubbo.common.util.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -46,9 +47,11 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -194,9 +197,9 @@ public class WxPayUtil {
      * @param weChatOrder weChatOrder
      * @param properties  properties
      * @return map
-     * @throws com.aliyun.oss.ServiceException ServiceException
+     * @throws ServiceException ServiceException
      */
-    public static Map<String, String> getH5PayUrl(WeChatOrder weChatOrder, WeChatProperties properties) {
+    public static Map<String, String> getH5PayUrl(com.dubbo.common.util.wechat.WeChatOrder weChatOrder, WeChatProperties properties) {
 
         Map<String, String> paramMap = new TreeMap<>();
         paramMap.put("attach", org.apache.commons.lang.StringUtils.trim(weChatOrder.getAttach()));
@@ -219,12 +222,12 @@ public class WxPayUtil {
             response = requestXml(PAY_URL, xmlData);
         } catch (Exception e) {
             log.error("微信H5下单失败", e);
-            throw new com.aliyun.oss.ServiceException(e);
+            throw new ServiceException(e);
         }
         log.info("getH5PayUrl>>>>>>>>>>>>>>>>>>>>>>>>>response: {}", response);
         Map<String, String> result = xmlToMap(response);
         if (MapUtils.isEmpty(result)) {
-            throw new com.aliyun.oss.ServiceException();
+            throw new ServiceException();
         }
         if (!SUCCESS.equals(result.get(RESULT_CODE))) {
             //直接返回微信支付商户号或密钥配置错误
@@ -241,7 +244,7 @@ public class WxPayUtil {
      * @param weChatOrder      chatOrder
      * @return map
      */
-    public static Map<String, String> createJsApi(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
+    public static Map<String, String> createJsApi(WeChatProperties weChatProperties, com.dubbo.common.util.wechat.WeChatOrder weChatOrder) {
 
         SortedMap<String, String> data = new TreeMap<>();
         data.put("appid", weChatProperties.getAppId());
@@ -276,7 +279,7 @@ public class WxPayUtil {
             params.put("orderNo", weChatOrder.getOutTradeNo());
             return params;
         } else {
-            throw new com.aliyun.oss.ServiceException("错误接口返回：" + resultMap.toString());
+            throw new ServiceException("错误接口返回：" + resultMap.toString());
         }
     }
 
@@ -342,7 +345,7 @@ public class WxPayUtil {
      * @param weChatOrder      weChatOrder
      * @return String
      */
-    public static Map<String, String> refund(WeChatProperties weChatProperties, WeChatOrder weChatOrder) {
+    public static Map<String, String> refund(WeChatProperties weChatProperties, com.dubbo.common.util.wechat.WeChatOrder weChatOrder) {
 
         Map<String, String> data = new TreeMap<>();
         data.put("appid", weChatProperties.getAppId());
@@ -379,7 +382,7 @@ public class WxPayUtil {
             return new SSLConnectionSocketFactory(sslContext, new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         } catch (Exception e) {
             log.error("微信证书初始化错误", e);
-            throw new com.aliyun.oss.ServiceException("微信证书初始化错误", e);
+            throw new ServiceException("微信证书初始化错误", e);
         }
 
     }
@@ -390,7 +393,7 @@ public class WxPayUtil {
      * @param url 请求地址
      * @param xml 请求xml
      * @return string
-     * @throws com.aliyun.oss.ServiceException ServiceException
+     * @throws ServiceException ServiceException
      */
     private static String requestXml(String url, String xml) {
 
@@ -406,7 +409,7 @@ public class WxPayUtil {
             responseContent = EntityUtils.toString(entity, StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error("send http requestBase : {} error : ", httpPost, e);
-            throw new com.aliyun.oss.ServiceException("微信请求失败 : ", e);
+            throw new ServiceException("微信请求失败 : ", e);
         }
         return responseContent;
     }
@@ -432,7 +435,7 @@ public class WxPayUtil {
             responseContent = EntityUtils.toString(entity, StandardCharsets.UTF_8);
         } catch (Exception e) {
             log.error("send http requestBase : {} error : ", httpPost, e);
-            throw new com.aliyun.oss.ServiceException("微信请求失败 : ", e);
+            throw new ServiceException("微信请求失败 : ", e);
         }
         return responseContent;
     }
@@ -484,7 +487,7 @@ public class WxPayUtil {
     public static String generateSignature(final Map<String, String> data, String key, String signType) {
 
         Set<String> keySet = data.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
+        String[] keyArray = keySet.toArray(new String[0]);
         Arrays.sort(keyArray);
         StringBuilder sb = new StringBuilder();
         for (String k : keyArray) {
@@ -651,6 +654,43 @@ public class WxPayUtil {
         } catch (IOException e) {
             throw new ServiceException("请求失败 : {}", e);
         }
+    }
+
+    public static String transfer(WeChatProperties properties) throws Exception {
+
+        String transfer = "https://api.mch.weixin.qq.com/v3/transfer/batches";
+        //申请商户号的appid或商户号绑定的appid（企业号corpid即为此appid）
+        String appId = "";
+        //用户在直连商户应用下的用户标示
+        String openId = "";
+        Map<String, Object> postMap = new HashMap<>();
+
+        //商家批次单号 长度 1~32
+        String outNo = IdUtil.generate("T");
+        postMap.put("appid", appId);
+        postMap.put("out_batch_no", outNo);
+        //该笔批量转账的名称
+        postMap.put("batch_name", "测试转账");
+        //转账说明，UTF8编码，最多允许32个字符
+        postMap.put("batch_remark", "测试转账");
+        //转账金额单位为“分”。 总金额
+        postMap.put("total_amount", 100);
+        //。转账总笔数
+        postMap.put("total_num", 1);
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> subMap = new HashMap<>(4);
+        //商家明细单号
+        subMap.put("out_detail_no", outNo);
+        //转账金额
+        subMap.put("transfer_amount", 100);
+        //转账备注
+        subMap.put("transfer_remark", "明细备注1");
+        //用户在直连商户应用下的用户标示
+        subMap.put("openid", openId);
+        list.add(subMap);
+        postMap.put("transfer_detail_list", list);
+        SSLConnectionSocketFactory socketFactory = initCert(properties);
+        String resultXml = requestSslXml(transfer, JSON.toJSONString(postMap), socketFactory);
     }
 
     /**
