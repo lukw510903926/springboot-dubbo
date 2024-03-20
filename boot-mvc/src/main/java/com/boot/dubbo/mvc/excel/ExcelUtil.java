@@ -5,6 +5,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.read.builder.ExcelReaderBuilder;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -30,14 +32,40 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 public class ExcelUtil {
 
-    private static Map<String,String> map = Maps.newConcurrentMap();
+    private static Map<String, String> map = Maps.newConcurrentMap();
+
     static {
-        map.put("借","1");
-        map.put("贷","2");
+        map.put("借", "1");
+        map.put("贷", "2");
     }
 
     public static void main(String[] args) throws Exception {
-        readAccf();
+        String fileName = "/Users/lukewei/Desktop/封面模板.xlsx";
+        FileInputStream inputStream = FileUtils.openInputStream(new File(fileName));
+        MapListener excelListener = new MapListener();
+        ExcelReaderBuilder readerBuilder = EasyExcel.read(inputStream, excelListener);
+        readerBuilder.sheet().doRead();
+        List<Map<Integer, String>> list = excelListener.getList();
+        List<JSONObject> collect = list.stream().map(item -> {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", item.get(1));
+            jsonObject.put("imageUrl", item.get(3));
+            jsonObject.put("locationType", item.get(5));
+            jsonObject.put("fontSize", item.get(6));
+            jsonObject.put("fontColors", item.get(7).split(","));
+            jsonObject.put("backgroundColor", item.get(8));
+            jsonObject.put("backgroundAlpha", item.get(9));
+            jsonObject.put("borderColor", item.get(10));
+            jsonObject.put("borderWidth", item.get(11));
+            jsonObject.put("shadowColor", item.get(12));
+            jsonObject.put("fontUline", item.get(13));
+            jsonObject.put("fontBold", item.get(14));
+            jsonObject.put("fontItalic", item.get(15));
+            jsonObject.put("fontAlign", item.get(16));
+            return jsonObject;
+
+        }).collect(Collectors.toList());
+        System.out.println(JSON.toJSONString(collect));
     }
 
     static void readAccf() throws Exception {

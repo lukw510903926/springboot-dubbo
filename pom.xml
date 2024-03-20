@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.boot.dubbo</groupId>
-    <artifactId>boot-dubbo</artifactId>
+    <artifactId>springboot-dubbo</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
@@ -214,10 +214,8 @@
         <module>dubbo-common</module>
         <module>dubbo-wx</module>
         <module>dubbo-nacos</module>
-        <module>boot-gson</module>
-        <module>boot-finance</module>
         <module>boot-gateway</module>
-        <module>boot-elasticsearch</module>
         <module>boot-canal</module>
+        <module>boot-fluent</module>
     </modules>
 </project>

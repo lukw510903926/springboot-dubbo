@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.boot.dubbo</groupId>
+        <artifactId>springboot-dubbo</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>boot-fluent</artifactId>
+    <packaging>jar</packaging>
+
+    <name>boot-fluent</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <fluent-mybatis.version>1.8.7</fluent-mybatis.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 引入fluent-mybatis 运行依赖包, scope为compile -->
+        <dependency>
+            <groupId>com.github.atool</groupId>
+            <artifactId>fluent-mybatis</artifactId>
+            <version>${fluent-mybatis.version}</version>
+        </dependency>
+        <!-- 引入fluent-mybatis-processor, scope设置为provider 编译需要，运行时不需要 -->
+        <dependency>
+            <groupId>com.github.atool</groupId>
+            <artifactId>fluent-mybatis-processor</artifactId>
+            <scope>provided</scope>
+            <version>${fluent-mybatis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- 集成MySQL 驱动包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.11</version>
+        </dependency>
+        <!--集成lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- 集成guava 工具包 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1.1-jre</version>
+        </dependency>
+    </dependencies>
+</project>

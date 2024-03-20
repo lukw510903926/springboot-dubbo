@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -205,5 +206,12 @@ public class OkHttpUtil {
         Builder builder = new Builder();
         params.forEach(builder::add);
         return builder.build();
+    }
+
+    public static void main(String[] args) {
+        HashMap<String, String> map = Maps.newHashMap();
+        map.put("name","name");
+        map.put("password","password");
+        OkHttpUtil.post("localhost:18551/crm-admin/b/employee/getTeamEmployee",map);
     }
 }

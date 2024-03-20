@@ -690,7 +690,7 @@ public class WxPayUtil {
         list.add(subMap);
         postMap.put("transfer_detail_list", list);
         SSLConnectionSocketFactory socketFactory = initCert(properties);
-        String resultXml = requestSslXml(transfer, JSON.toJSONString(postMap), socketFactory);
+        return requestSslXml(transfer, JSON.toJSONString(postMap), socketFactory);
     }
 
     /**

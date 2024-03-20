@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.boot.dubbo</groupId>
-        <artifactId>boot-dubbo</artifactId>
+        <artifactId>springboot-dubbo</artifactId>
         <version>1.0.0</version>
     </parent>
     <artifactId>boot-gateway</artifactId>
